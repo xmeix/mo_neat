@@ -1,0 +1,8 @@
+@import "./../../main.scss";
+.button-label {
+  font-size: 12px;
+  line-height: 10px;
+}
+button {
+  @include button(93%);
+}

@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+@import "./App.scss";
+
+$font: "Montserrat", sans-serif;
+$primary-color: #3550a1;
+$secondary-color: #facac8;
+$accent-color: #f2c94c;
+$background-color: #f7f8fa;
+$muted-background-color: #cccccc34;
+$text-color: #333333;
+$muted-text-color: #7777772c;
+$button-text-color: #ffffff;
+$link-color: #3550a1;
+$link-hover-color: #465da3;
+$button-background-color: #3550a1;
+$button-hover-background-color: #465da3;
+$hover-link-background-color: #77777710;
+$hover-sub-link-background-color: #77777705;
+$input-background-color: #ffffff;
+$input-border-color: #cccccc;
+$input-focus-border-color: #3550a1;
+$input-placeholder-color: #aaaaaa;
+$input-text-color: #333333;
+$box-shadow-color: rgba(0, 0, 0, 0.4);
+$error-color: rgba(238, 112, 112, 0.9);
+$success-color: rgba(53, 160, 144, 0.9);
+$toast-text-color: #ffffff;
+
+//roles colors
+
+$admin-bg-col: rgba(255, 0, 0, 0.103);
+$poster-bg-col: rgba(0, 0, 255, 0.096);
+$regular-bg-col: rgba(0, 128, 0, 0.219);
+
+@mixin role($role) {
+  padding: 0.5em 1em;
+  text-align: center;
+  border-radius: 30px;
+  width: 50px;
+  @if $role == "ADMIN" {
+    background-color: $admin-bg-col;
+  } @else if $role == "REGULAR" {
+    background-color: $poster-bg-col;
+  } @else {
+    background-color: $regular-bg-col;
+  }
+}
+.admin-div {
+  @include role(ADMIN);
+}
+.poster-div {
+  @include role(POSTER);
+}
+.regular-div {
+  @include role(REGULAR);
+}
+
+body {
+  font-family: $font;
+  background-color: $background-color;
+  color: $text-color;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+a {
+  color: $link-color;
+  &:hover {
+    color: $link-hover-color;
+  }
+}
+
+@mixin button(
+  $width: 100,
+  $bg-color: $button-background-color,
+  $btn-text-col: $button-text-color,
+  $btn-hover-bg-color: $button-hover-background-color,
+  $fz: 14px,
+  $fw: 600,
+  $padding: 10px 20px
+) {
+  background-color: $bg-color;
+  color: $btn-text-col;
+  transition: background-color 0.3s ease;
+  border: none;
+  padding: $padding;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: $fw;
+  font-size: $fz;
+
+  width: $width;
+  cursor: pointer;
+  &:hover {
+    background-color: $btn-hover-bg-color;
+  }
+  &:focus,
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0.2em 0.5em;
+  text-transform: capitalize;
+}
+input,
+textarea {
+  background-color: $input-background-color;
+  color: $input-text-color;
+  border: 1px solid $input-border-color;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+
+  width: 80%;
+
+  &::placeholder,
+  &::placeholder {
+    font-size: 14px;
+    color: $input-placeholder-color;
+    text-transform: lowercase;
+  }
+
+  &:focus,
+  &:focus {
+    outline: none;
+    border-color: $input-focus-border-color;
+  }
+  &[type="submit"] {
+    background-color: $button-background-color;
+    color: $button-text-color;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    &:hover {
+      background-color: $button-hover-background-color;
+    }
+    &:focus {
+      outline-offset: 2px;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@import "./../../../index.scss";
+
+.action-menu {
+  position: relative;
+  .action-icon {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .action-dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 1.5em;
+    left: 0.5em;
+    width: 110px;
+    border: 1px solid $muted-background-color;
+    box-shadow: 0 0 1px $box-shadow-color;
+    z-index: 1;
+
+    .action-btn {
+      @include button(
+        100%,
+        $background-color,
+        $text-color,
+        $background-color,
+        11px,
+        500
+      );
+    }
+  }
+}

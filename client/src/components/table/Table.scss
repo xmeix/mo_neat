@@ -1,0 +1,163 @@
+@import "./../../../index.scss";
+@import "./../../App.scss";
+.table-container {
+  margin: 0 2em;
+  border-radius: 8px;
+
+  @include media(xxs) {
+    margin: 0;
+  }
+  @include media(xs) {
+    margin: 0;
+  }
+  @include media(sm) {
+    margin: 0;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
+    margin: 1em;
+    @include media(xxs) {
+      margin: 0;
+    }
+
+    @include media(xs) {
+      margin: 0;
+    }
+    @include media(sm) {
+      margin: 0;
+    }
+  }
+  .custom-table {
+    border-collapse: collapse;
+    box-shadow: 0 0 1px $box-shadow-color;
+    width: 100%;
+    th,
+    td {
+      padding: 0.8em 1em;
+
+      font-size: 14px;
+    }
+
+    th {
+      background-color: $muted-background-color;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    tr {
+      border-bottom: 1px solid $muted-background-color;
+      .table-icon {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-top: 10px;
+
+    .pag-btn-icon {
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    button {
+      width: 25px;
+      height: 25px;
+      padding: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: $text-color;
+      background-color: transparent;
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      &.active {
+        background-color: $primary-color;
+        color: $background-color;
+        border-color: $primary-color;
+      }
+
+      &:hover:not(.active):not(:disabled) {
+        background-color: rgba($primary-color, 0.1);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    .pag-num {
+      background-color: transparent;
+      color: $text-color;
+    }
+
+    .pag-ellipsis {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      color: $text-color;
+    }
+  }
+}
+.table-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em;
+
+  .create-btn {
+    padding: 0.5em 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    width: fit-content;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+
+    @include media(xxs) {
+      font-size: 12px;
+    }
+    @include media(xs) {
+      font-size: 12px;
+    }
+  }
+  .table-item-num {
+    font-weight: 500;
+    font-size: 13px;
+    @include media(xxs) {
+      font-size: 12px;
+    }
+    @include media(xs) {
+      font-size: 13px;
+    }
+  }
+  .table-title {
+    font-size: 18px;
+    font-weight: 600;
+    @include media(xxs) {
+      font-size: 13px;
+    }
+    @include media(xs) {
+      font-size: 14px;
+    }
+    @include media(sm) {
+      font-size: 16px;
+    }
+  }
+}

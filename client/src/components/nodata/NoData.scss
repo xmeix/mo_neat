@@ -1,0 +1,13 @@
+@import "./../../main.scss";
+.empty-table {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px $muted-text-color;
+  border-radius: 10px;
+  .empty-table-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+}

@@ -1,0 +1,14 @@
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px;
+  gap: 1em;
+  padding: 2em;
+  .input-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1em;
+  }
+}

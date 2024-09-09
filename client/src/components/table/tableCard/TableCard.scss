@@ -1,0 +1,98 @@
+@import "./../../../index.scss";
+@import "./../../../App.scss";
+@import "./../Table.scss";
+
+.table-card {
+  border: 1px solid $muted-text-color;
+  border-radius: 8px;
+  padding: 2em;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+
+  transition: transform 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-headers-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .card-headers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+
+      .card-header-primary {
+        font-size: 15px;
+        text-transform: capitalize;
+        font-weight: 500;
+        @include media(xxs) {
+          font-size: 13px;
+        }
+        @include media(xs) {
+          font-size: 14px;
+        }
+      }
+      .card-header-secondary {
+        text-transform: capitalize;
+        font-size: 13px;
+        font-weight: 500;
+        color: $primary-color;
+        @include media(xxs) {
+          font-size: 12px;
+        }
+        @include media(xs) {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .card-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-size: 13px;
+    @include media(xxs) {
+      font-size: 12px;
+    }
+    @include media(xs) {
+      font-size: 12px;
+    }
+    .card-field {
+      display: flex;
+      gap: 0.5em;
+
+      .field-label {
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: $muted-background-color;
+    border-radius: 10px;
+    padding: 1em 1.5em;
+    font-size: 13px;
+    @include media(sm) {
+      font-size: 12px;
+    }
+    @include media(xxs) {
+      font-size: 11px;
+    }
+    @include media(xs) {
+      font-size: 11px;
+    }
+  }
+}
