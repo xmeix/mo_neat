@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+// only for admin //users won't need to connect
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  name       String
+  phone      String?
+  isAdmin    Boolean   @default(true)
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+ 
+}
+ 
+
+model Order {
+  id               Int              @id @default(autoincrement())
+   
+   
+  //price information
+  total_before_reduction Int
+  total_after_reduction Int?
+  shippingCost Int
+  checkoutPrice Int //(shipping fees + total (either before or after reduction))
+  
+  //customer information
+  orderedBy String //orderer name
+  orderedByPhone String //orderer phone
+  addresse  String 
+  commune String
+  wilaya String
+ 
+  //delivery information
+  deliveryType DeliveryType    @default(HOME_DELIVERY)
+  status  Status[] // this is related to one order that has a status at a certain time
+  chosenStopDesk StopDesk? @relation(fields: [chosenStopDeskid], references: [id])
+  chosenStopDeskid Int?
+  //other
+  orderProducts  OrderProduct[]
+  OrderCouponid Int
+  OrderCoupon Coupon @relation(fields: [OrderCouponid], references: [id])
+
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+}
+model StopDesk {
+  id               Int              @id @default(autoincrement())
+  name String
+  wilayaId Int
+  wilaya Wilaya @relation(fields: [wilayaId], references: [id])
+  StopDeskDeliveryFees Int
+
+  Order Order[]
+}
+
+//add new wilayas //add new communes controllers
+model Wilaya {
+  id               Int              @id @default(autoincrement())
+
+  name String
+  communes String[]
+  homeDeliveryFee Int
+
+  StopDesk StopDesk[]
+  createdAt  DateTime  @default(now())
+
+}
+
+
+model Status {
+  id               Int              @id @default(autoincrement())
+  orderStatus ORDERSTATUS @default(PENDING)
+  createdAt  DateTime  @default(now())
+
+  Orderid Int
+  Order Order  @relation(fields: [Orderid], references: [id])
+}
+
+
+//add controller for sizes 
+model Product {
+  id               Int              @id @default(autoincrement())
+  title String
+  description String
+  images String[]
+  stock Int @default(1)
+  category Category[]
+  sizes String[]
+  colors String[]
+  onSale Boolean @default(false)
+  price_before_sale Int
+  discountPercentage Int @default(0)
+  orderProducts OrderProduct[]
+ 
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Category {
+  id               Int              @id @default(autoincrement())
+  title String
+  Description String?
+
+  products Product[]
+}
+
+model OrderProduct {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+
+  chosenSize String 
+  chosenColor String
+  quantity Int @default(1)
+}
+
+model Coupon {
+  id                  Int      @id @default(autoincrement())
+  name                String
+  code                String   @unique
+  discountPercentage  Int
+  description         String?
+  expiryDate          DateTime
+
+  orders              Order[]
+}
+
+ 
+ 
+ 
+enum DeliveryType {
+  HOME_DELIVERY  //in this case we need a table that contains all the commune/wilaya/delivery prices
+  STOP_DESK_DELIVERY // in this case we need a table that contains all the existing stop desks for each wilaya
+}
+
+enum ORDERSTATUS {
+  PENDING
+  PROCESSING 
+  DELIVERED
+  CANCELLED
+  RETURNED
+}

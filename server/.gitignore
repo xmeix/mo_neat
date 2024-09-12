@@ -1,0 +1,38 @@
+# Node.js
+node_modules/
+yarn.lock
+package-lock.json
+
+# Prisma
+prisma/migrations/
+prisma/dev.db
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
+Dockerfile
+docker-data/
+
+# Build output
+dist/
+build/
+*.out
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependency directories
+.bowerrc
+bower_components/
