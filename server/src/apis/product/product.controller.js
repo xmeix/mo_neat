@@ -20,27 +20,56 @@ export const getAllProducts = async (req, res, next) => {
   }
 };
 
+const categoriesIdsWCreation = (categories) => {
+  return categories.map(async (categoryTitle) => {
+    let category = await prisma.category.findUnique({
+      where: { title: categoryTitle },
+    });
+
+    if (!category) {
+      category = await prisma.category.create({
+        data: { title: categoryTitle },
+      });
+    }
+
+    return { id: category.id };
+  });
+};
+
+//add product to a certain category and if theres no category it creates a new one
 export const addProduct = async (req, res, next) => {
   try {
     const {
       title,
       description,
       stock,
+      categories,
+      sizes,
+      colors,
       onSale,
       price_before_sale,
       discountPercentage,
     } = req.body;
 
     const images = req.files.map((file) => file.path);
+
+    const categoriesData = await Promise.all(
+      categoriesIdsWCreation(categories)
+    );
+
     const product = await prisma.product.create({
       data: {
         title,
         description,
+        categories: {
+          connect: categoriesData,
+        },
+        sizes,
+        colors,
         stock: parseInt(stock),
         onSale: parseBoolean(onSale),
         price_before_sale: parseInt(price_before_sale),
         discountPercentage: parseInt(discountPercentage),
-
         images,
       },
     });
@@ -54,6 +83,7 @@ export const addProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 export const editProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -62,9 +92,17 @@ export const editProduct = async (req, res, next) => {
       description,
       price_before_sale,
       onSale,
+      stock,
       discountPercentage,
+      categories,
+      sizes,
+      colors,
     } = req.body;
     const images = req.files ? req.files.map((file) => file.path) : undefined;
+
+    const categoriesData = await Promise.all(
+      categoriesIdsWCreation(categories)
+    );
 
     const product = await prisma.product.findUnique({
       where: { id: parseInt(id) },
@@ -84,6 +122,12 @@ export const editProduct = async (req, res, next) => {
         title,
         description,
         images,
+        stock,
+        categories: {
+          connect: categoriesData,
+        },
+        sizes,
+        colors,
         price_before_sale,
         onSale,
         discountPercentage,
@@ -124,36 +168,3 @@ export const deleteProduct = async (req, res, next) => {
   }
 };
 
-export const rateProduct = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { rating } = req.body;
-
-    const product = await prisma.product.findUnique({
-      where: { id: parseInt(id) },
-    });
-    if (!product) {
-      throw new ValidationError("Product not found!");
-    }
-    if (!req.user.isAdmin) {
-      throw new AuthorizationError(
-        "You do not have permission to update this product!"
-      );
-    }
-
-    const updatedProduct = await prisma.product.update({
-      where: { id: parseInt(id) },
-      data: {
-        rating,
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      data: updatedProduct,
-      message: "Thank you for rating!",
-    });
-  } catch (error) {
-    next(error);
-  }
-};

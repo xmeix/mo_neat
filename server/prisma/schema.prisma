@@ -12,7 +12,6 @@ model User {
   email      String    @unique
   password   String
   name       String
-  phone      String?
   isAdmin    Boolean   @default(true)
   
   createdAt  DateTime  @default(now())
@@ -27,20 +26,20 @@ model Order {
    
   //price information
   total_before_reduction Int
-  total_after_reduction Int?
+  total_after_reduction Int @default(0)
   shippingCost Int
   checkoutPrice Int //(shipping fees + total (either before or after reduction))
   
   //customer information
   orderedBy String //orderer name
   orderedByPhone String //orderer phone
-  addresse  String 
+  address  String? 
   commune String
   wilaya String
  
   //delivery information
   deliveryType DeliveryType    @default(HOME_DELIVERY)
-  status  Status[] // this is related to one order that has a status at a certain time
+  status Status[] // this is related to one order that has a status at a certain time
   chosenStopDesk StopDesk? @relation(fields: [chosenStopDeskid], references: [id])
   chosenStopDeskid Int?
   //other
@@ -55,10 +54,11 @@ model Order {
 }
 model StopDesk {
   id               Int              @id @default(autoincrement())
-  name String
+  name String @unique
+  address String?
   wilayaId Int
-  wilaya Wilaya @relation(fields: [wilayaId], references: [id])
   StopDeskDeliveryFees Int
+  wilaya Wilaya @relation(fields: [wilayaId], references: [id])
 
   Order Order[]
 }
@@ -87,29 +87,28 @@ model Status {
 }
 
 
-//add controller for sizes 
+
 model Product {
   id               Int              @id @default(autoincrement())
   title String
   description String
   images String[]
   stock Int @default(1)
-  category Category[]
+  categories Category[]
   sizes String[]
   colors String[]
   onSale Boolean @default(false)
   price_before_sale Int
   discountPercentage Int @default(0)
-  orderProducts OrderProduct[]
  
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  orderProducts OrderProduct[]
 }
 
 model Category {
   id               Int              @id @default(autoincrement())
-  title String
-  Description String?
+  title String @unique 
 
   products Product[]
 }

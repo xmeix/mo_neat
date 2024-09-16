@@ -1,6 +1,6 @@
 import multer from "multer";
 import path from "path";
-import ValidationError from "./errors/ValidationError";
+import ValidationError from "./errors/ValidationError.js";
 
 const DIR = path.resolve("public/images/");
 

@@ -7,6 +7,7 @@ import authRoutes from "./src/apis/auth/auth.route.js";
 import orderRoutes from "./src/apis/order/order.route.js";
 import productRoutes from "./src/apis/product/product.route.js";
 import couponRoutes from "./src/apis/coupon/coupon.route.js";
+import otherRoutes from "./src/apis/other/other.route.js";
 import errorHandler from "./src/middlewares/ErrorHandler.js";
 
 export const setupRoutes = (app) => {
@@ -14,7 +15,7 @@ export const setupRoutes = (app) => {
   // Enable CORS for API calls
   app.use(
     cors({
-      origin: "http://localhost:5173",  
+      origin: "http://localhost:5173",
       credentials: true,
     })
   );
@@ -31,5 +32,6 @@ export const setupRoutes = (app) => {
   app.use("/api/orders", orderRoutes);
   app.use("/api/coupons", couponRoutes);
   app.use("/api/products", productRoutes);
+  app.use("/api/wilayas", otherRoutes);
   app.use(errorHandler);
 };

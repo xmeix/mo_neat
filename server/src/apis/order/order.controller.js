@@ -19,23 +19,17 @@ export const createOrder = async (req, res, next) => {
     const {
       orderedBy,
       orderedByPhone,
-      deliveryAddress,
+      address,
+      commune,
+      wilaya,
+
+      deliveryType,
+      chosenStopDeskid,
+
       orderProducts,
       couponCode,
       shippingCost,
     } = req.body;
-
-    // Validate delivery address
-    if (
-      !deliveryAddress ||
-      !deliveryAddress.street1 ||
-      !deliveryAddress.city ||
-      !deliveryAddress.zipCode
-    ) {
-      throw new ValidationError(
-        "Invalid delivery address. Required fields: street1, city, zipCode."
-      );
-    }
 
     // Validate products and calculate total_before_reduction
     let total_before_reduction = 0;
@@ -76,26 +70,18 @@ export const createOrder = async (req, res, next) => {
     // Calculate the final checkout price (with shipping)
     const checkoutPrice = total_after_reduction + shippingCost;
 
-    // Create the new address
-    const newAddress = await prisma.address.create({
-      data: {
-        street1: deliveryAddress.street1,
-        street2: deliveryAddress.street2 || "",
-        street3: deliveryAddress.street3 || "",
-        street4: deliveryAddress.street4 || "",
-        street5: deliveryAddress.street5 || "",
-        city: deliveryAddress.city,
-        zipCode: deliveryAddress.zipCode,
-      },
-    });
-
     // Create the order
     const order = await prisma.order.create({
       data: {
         orderedBy,
         orderedByPhone,
-        deliveryAddressId: newAddress.id,
-        usedCouponId,
+        address,
+        commune,
+        wilaya,
+
+        deliveryType,
+        chosenStopDeskid,
+        OrderCouponid: usedCouponId,
         total_before_reduction,
         total_after_reduction,
         shippingCost,
@@ -104,12 +90,15 @@ export const createOrder = async (req, res, next) => {
           create: orderProducts.map((orderProduct) => ({
             productId: orderProduct.productId,
             quantity: orderProduct.quantity,
+            chosenSize: orderProduct.chosenSize,
+            chosenColor: orderProduct.chosenColor,
           })),
         },
       },
       include: {
         orderProducts: true,
-        deliveryAddress: true,
+        chosenStopDesk: true, 
+        OrderCoupon: true, 
       },
     });
 
