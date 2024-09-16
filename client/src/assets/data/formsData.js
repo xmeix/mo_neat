@@ -62,16 +62,9 @@ export const productFormInputs = [
     value: "",
   },
   {
-    label: "Price Before Sale",
+    label: "Price",
     name: "price_before_sale",
     placeholder: "Enter the original price",
-    type: "number",
-    value: "",
-  },
-  {
-    label: "Discount Percentage",
-    name: "discountPercentage",
-    placeholder: "Enter the discount percentage",
     type: "number",
     value: "",
   },
@@ -82,7 +75,6 @@ export const productFormInputs = [
     type: "number",
     value: "",
   },
-
   {
     label: "On Sale",
     name: "onSale",
@@ -95,10 +87,49 @@ export const productFormInputs = [
     value: "",
     isMulti: false,
     creatable: false,
+    children: [
+      {
+        label: "Discount Percentage",
+        name: "discountPercentage",
+        placeholder: "Enter the discount percentage",
+        type: "number",
+        value: "",
+      },
+    ],
+  },
+
+  {
+    label: "Sizes",
+    name: "sizes",
+    placeholder: "Select the product sizes",
+    type: "select",
+    options: [
+      { label: "37", value: "37" },
+      { label: "XL", value: "XL" },
+      { label: "M", value: "M" },
+    ],
+    isMulti: false,
+    value: "",
+    creatable: true,
   },
   {
-    label: "Category",
-    name: "category",
+    label: "Colors",
+    name: "colors",
+    placeholder: "Select the product colors",
+    type: "select",
+    options: [
+      { value: "#ff0000", label: "Red" },
+      { value: "#00ff00", label: "Green" },
+      { value: "#0000ff", label: "Blue" },
+    ],
+    isMulti: true,
+    value: "",
+    creatable: true,
+    isColor: true,
+  },
+  {
+    label: "Categories",
+    name: "categories",
     placeholder: "Select the product category",
     type: "select",
     options: [
@@ -107,7 +138,6 @@ export const productFormInputs = [
       { label: "Home & Garden", value: "HOME_GARDEN" },
       { label: "Health & Beauty", value: "HEALTH_BEAUTY" },
       { label: "Sports & Outdoors", value: "SPORTS_OUTDOORS" },
-      { label: "Other", value: "OTHER" },
     ],
     isMulti: true,
     value: "",

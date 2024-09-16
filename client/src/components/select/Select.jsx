@@ -2,6 +2,8 @@ import "./Select.scss";
 import CreatableSelect from "react-select/creatable";
 import SelectComponent from "react-select";
 import { useState } from "react";
+import { isValidHex } from "../../utils/functions";
+
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
@@ -13,7 +15,7 @@ const customStyles = {
     fontFamily: "inherit",
     fontSize: "14px",
     transition: "border-color 0.3s ease",
-    boxShadow: "none", 
+    boxShadow: "none",
     "&:hover": {
       borderColor: state.isFocused ? "#3550a1" : "#cccccc",
     },
@@ -37,9 +39,19 @@ const customStyles = {
       backgroundColor: "#f1f1f1",
     },
   }),
-  multiValue: (provided) => ({
+  multiValue: (provided, { data }) => ({
     ...provided,
-    backgroundColor: "#e6f7f5",
+    display: "flex",
+    alignItems: "center",
+    "&:before": {
+      content: '""',
+      display: "block",
+      width: "12px",
+      height: "12px",
+      backgroundColor: data.value,
+      marginRight: "8px",
+      borderRadius: "50%",
+    },
   }),
   multiValueLabel: (provided) => ({
     ...provided,
@@ -50,6 +62,7 @@ const customStyles = {
     zIndex: 2,
   }),
 };
+
 const Select = ({
   label,
   name,
@@ -58,6 +71,7 @@ const Select = ({
   onChange,
   isMulti = false,
   creatable = false,
+  isColor = false,
 }) => {
   const [selectOptions, setSelectOptions] = useState(options);
 
@@ -80,8 +94,12 @@ const Select = ({
   };
 
   const handleCreateOption = (inputValue) => {
-    const newOption = { value: inputValue, label: inputValue };
+    if (isColor && !isValidHex(inputValue)) {
+      alert("Please enter a valid hex color code (e.g., #ff0000).");
+      return;
+    }
 
+    const newOption = { value: inputValue, label: inputValue };
     setSelectOptions((prevOptions) => [...prevOptions, newOption]);
 
     if (isMulti) {
@@ -111,6 +129,22 @@ const Select = ({
           onCreateOption={handleCreateOption}
           options={selectOptions}
           styles={customStyles}
+          formatOptionLabel={(option) => (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {isColor && (
+                <span
+                  style={{
+                    backgroundColor: option.value,
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    marginRight: "8px",
+                  }}
+                />
+              )}
+              {option.label}
+            </div>
+          )}
         />
       ) : (
         <SelectComponent

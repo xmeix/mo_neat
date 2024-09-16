@@ -3,13 +3,14 @@ import "./AdminLayout.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import AdminSideNav from "../components/adminNav/AdminSideNav";
+import { getAllProducts } from "../../../store/apiCalls/product";
 const AdminLayout = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (isLoggedIn && user?.isAdmin) {
-      // dispatch(getAllUsers());
+      dispatch(getAllProducts());
     }
   }, [isLoggedIn, user?.isAdmin, dispatch]);
 

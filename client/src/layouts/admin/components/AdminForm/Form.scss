@@ -3,28 +3,34 @@
 .admin-form {
   display: flex;
   flex-direction: column;
-  border: solid 1px;
+
   width: 100%;
+
   .inputs {
     display: grid;
-    grid-gap: 16px;
+    grid-gap: 1em;
     grid-template-columns: repeat(3, 1fr);
+    margin: 1em;
 
-    @include media(lg) {
-      grid-template-columns: repeat(3, 1fr);
-    }
     @include media(md) {
       grid-template-columns: repeat(2, 1fr);
     }
+
     @include media(sm) {
       grid-template-columns: repeat(2, 1fr);
     }
+
     @include media(xs) {
       grid-template-columns: repeat(1, 1fr);
     }
+  }
 
-    @include media(xxs) {
-      grid-template-columns: repeat(1, 1fr);
-    }
+  .form-input-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .child-inputs {
+    margin-top: 1em;
   }
 }

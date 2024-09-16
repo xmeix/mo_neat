@@ -22,6 +22,9 @@ const useDrawer = () => {
             </div>
           </div>
         )}
+        {showDrawer && (
+          <div className="hideOther" onClick={() => setShowDrawer(false)}></div>
+        )}
       </>
     );
   };
