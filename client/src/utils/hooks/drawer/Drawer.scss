@@ -1,0 +1,39 @@
+@import "./../../../index.scss";
+
+.drawer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 999;
+  background-color: $background-color;
+  box-shadow: 0 0 4px $box-shadow-color;
+  overflow-y: scroll;
+  padding: 1em;
+  max-height: 60%;
+  .drawer-wrapper {
+    padding: 1em;
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5em 2em;
+      width: 400px;
+      .close-btn {
+        padding: 0.3em;
+        cursor: pointer;
+      }
+
+      .drawer-title {
+        font-weight: 800;
+        font-size: 20px;
+      }
+    }
+
+    .drawer-content {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

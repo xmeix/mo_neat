@@ -29,4 +29,29 @@
       );
     }
   }
+
+  .action-btns-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.2em;
+
+    .action-btn {
+      @include button(
+        fit-content,
+        $background-color,
+        $text-color,
+        $background-color,
+        11px,
+        100
+      );
+      & {
+        background-color: $input-background-color;
+
+        padding: 0.5em;
+      }
+      .action-btn-icon {
+        font-size: 20px;
+      }
+    }
+  }
 }

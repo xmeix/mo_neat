@@ -1,0 +1,124 @@
+@import "./../../../../App.scss";
+@import "./../../../../index.scss";
+
+.admin-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 0.5em 1.5em;
+  background-color: $background-color; // Add your background color
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+  box-shadow: 0 0 0 1px $box-shadow-color;
+  .nav-icon {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .nav-user {
+    background-color: $muted-text-color;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    .nav-user-name {
+      text-transform: capitalize;
+      text-align: center;
+      font-weight: 800;
+    }
+  }
+
+  .nav-pan {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    transition: opacity 0.3s ease;
+    .admin-logo {
+      @include logo(15px);
+      transition: opacity 0.3s ease;
+    }
+  }
+}
+.admin-side-nav {
+  width: 250px;
+  position: fixed;
+  bottom: 0;
+  top: 3.55em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  background-color: $background-color;
+  box-shadow: 0 0 0 1px $box-shadow-color;
+  z-index: 999;
+
+  &.collapsed {
+    width: 0;
+    .admin-side-nav-list {
+      display: none;
+    }
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .admin-side-nav-list {
+    a {
+      text-decoration: none !important;
+      color: $text-color;
+    }
+
+    .sub-nav {
+      .sub-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        font-size: 14px;
+        font-weight: 400;
+        padding: 1em 3.5em;
+
+        &:hover {
+          background-color: $hover-sub-link-background-color;
+        }
+      }
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5em;
+      font-size: 14px;
+      font-weight: 400;
+      border-bottom: solid 1px $muted-text-color;
+      padding: 1em 1.8em;
+      cursor: pointer;
+
+      .nav-item-one {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+      }
+      .btn-icon {
+        font-size: 23px;
+
+        &:hover {
+          font-size: 25px;
+        }
+      }
+      &:hover {
+        background-color: $hover-link-background-color;
+      }
+    }
+  }
+}

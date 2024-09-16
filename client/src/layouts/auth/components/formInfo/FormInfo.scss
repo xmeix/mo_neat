@@ -1,0 +1,24 @@
+@import "./../../../../App.scss";
+@import "./../../../../index.scss";
+
+.form-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+
+  .auth-title {
+    font-size: 25px;
+    font-weight: 700;
+    color: $primary-color;
+    white-space: nowrap;
+  }
+
+  .auth-description {
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .auth-description-hero {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}

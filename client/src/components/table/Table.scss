@@ -1,5 +1,5 @@
-@import "./../../../index.scss";
 @import "./../../App.scss";
+@import "./../../index.scss";
 .table-container {
   margin: 0 2em;
   border-radius: 8px;
@@ -114,50 +114,17 @@
     }
   }
 }
-.table-top-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5em 1em;
 
-  .create-btn {
-    padding: 0.5em 1em;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    width: fit-content;
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-
-    @include media(xxs) {
-      font-size: 12px;
-    }
-    @include media(xs) {
-      font-size: 12px;
-    }
-  }
-  .table-item-num {
-    font-weight: 500;
+.table-title {
+  font-size: 15px;
+  font-weight: 600;
+  @include media(xxs) {
     font-size: 13px;
-    @include media(xxs) {
-      font-size: 12px;
-    }
-    @include media(xs) {
-      font-size: 13px;
-    }
   }
-  .table-title {
-    font-size: 18px;
-    font-weight: 600;
-    @include media(xxs) {
-      font-size: 13px;
-    }
-    @include media(xs) {
-      font-size: 14px;
-    }
-    @include media(sm) {
-      font-size: 16px;
-    }
+  @include media(xs) {
+    font-size: 14px;
+  }
+  @include media(sm) {
+    font-size: 14px;
   }
 }

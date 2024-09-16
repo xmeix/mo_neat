@@ -5,8 +5,8 @@ $font: "Montserrat", sans-serif;
 $primary-color: #3550a1;
 $secondary-color: #facac8;
 $accent-color: #f2c94c;
-$background-color: #f7f8fa;
-$muted-background-color: #cccccc34;
+$background-color: #f6f7f9;
+$muted-background-color: #cccccc17;
 $text-color: #333333;
 $muted-text-color: #7777772c;
 $button-text-color: #ffffff;
@@ -32,6 +32,15 @@ $admin-bg-col: rgba(255, 0, 0, 0.103);
 $poster-bg-col: rgba(0, 0, 255, 0.096);
 $regular-bg-col: rgba(0, 128, 0, 0.219);
 
+$exists: rgb(114, 175, 44);
+$notexist: rgb(235, 63, 63);
+
+.exists {
+  color: $exists;
+}
+.notexist {
+  color: $notexist;
+}
 @mixin role($role) {
   padding: 0.5em 1em;
   text-align: center;
@@ -107,8 +116,10 @@ label {
   padding: 0.2em 0.5em;
   text-transform: capitalize;
 }
+
 input,
 textarea {
+  box-sizing: border-box;
   background-color: $input-background-color;
   color: $input-text-color;
   border: 1px solid $input-border-color;
@@ -118,8 +129,6 @@ textarea {
   font-size: 14px;
   transition: border-color 0.3s ease;
 
-  width: 80%;
-
   &::placeholder,
   &::placeholder {
     font-size: 14px;
@@ -127,7 +136,6 @@ textarea {
     text-transform: lowercase;
   }
 
-  &:focus,
   &:focus {
     outline: none;
     border-color: $input-focus-border-color;
@@ -145,4 +153,26 @@ textarea {
       outline-offset: 2px;
     }
   }
+}
+/**_____________________________________________________________________________________*/
+/* ScrollBar.css */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--light-gray);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(211, 211, 211, 0.411);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: lightgrey;
 }

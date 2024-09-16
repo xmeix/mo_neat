@@ -3,96 +3,86 @@
 @import "./../Table.scss";
 
 .table-card {
-  border: 1px solid $muted-text-color;
-  border-radius: 8px;
-  padding: 2em;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-
-  transition: transform 0.2s ease;
-
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 0.5em;
+  padding: 1em;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+  background-color: $input-background-color;
+  border-radius: 5px;
 
-  &:hover {
-    transform: translateY(-2px);
+  .tc-actions {
   }
-
   .card-headers-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 1em;
 
+    .card-important {
+      flex: 1;
+
+      height: 130px;
+      width: 130px;
+      overflow: hidden;
+      border-radius: 5px;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
     .card-headers {
+      flex: 0.5;
+ 
+      .card-header-primary {
+        font-size: 18px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .card-header-secondary {
+        font-size: 13px;
+      }
+    }
+    .card-content {
+      flex: 1.5;
       display: flex;
       flex-direction: column;
       gap: 0.5em;
-
-      .card-header-primary {
-        font-size: 15px;
-        text-transform: capitalize;
-        font-weight: 500;
-        @include media(xxs) {
-          font-size: 13px;
-        }
-        @include media(xs) {
-          font-size: 14px;
-        }
-      }
-      .card-header-secondary {
-        text-transform: capitalize;
-        font-size: 13px;
-        font-weight: 500;
-        color: $primary-color;
-        @include media(xxs) {
+      .card-field {
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+        background-color: $muted-background-color;
+        padding: 0.5em 1em;
+        .field-label {
+          color: $input-text-color;
           font-size: 12px;
+          font-weight: 500;
         }
-        @include media(xs) {
-          font-size: 12px;
+        .field-value {
+          font-weight: 200;
+          font-size: 16px;
         }
-      }
-    }
-  }
-
-  .card-content {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    font-size: 13px;
-    @include media(xxs) {
-      font-size: 12px;
-    }
-    @include media(xs) {
-      font-size: 12px;
-    }
-    .card-field {
-      display: flex;
-      gap: 0.5em;
-
-      .field-label {
-        font-weight: 500;
-        text-transform: capitalize;
       }
     }
   }
 
   .card-footer {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    background-color: $muted-background-color;
-    border-radius: 10px;
-    padding: 1em 1.5em;
-    font-size: 13px;
-    @include media(sm) {
-      font-size: 12px;
-    }
-    @include media(xxs) {
-      font-size: 11px;
-    }
-    @include media(xs) {
-      font-size: 11px;
+    padding: 0 2em;
+    .card-field {
+      display: flex;
+      flex-direction: column;
+      .field-label {
+        color: $input-text-color;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .field-value {
+        font-size: 13px;
+      }
     }
   }
 }

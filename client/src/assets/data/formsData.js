@@ -1,0 +1,123 @@
+export const userFormInputs = [
+  {
+    label: "Email",
+    name: "email",
+    placeholder: "Enter your email",
+    type: "email",
+    value: "",
+  },
+  {
+    label: "Password",
+    name: "password",
+    placeholder: "Enter your password",
+    type: "password",
+    value: "",
+  },
+  {
+    label: "Name",
+    name: "name",
+    placeholder: "Enter your name",
+    type: "text",
+    value: "",
+  },
+  {
+    label: "Phone",
+    name: "phone",
+    placeholder: "Enter your phone number",
+    type: "tel",
+    value: "",
+  },
+  {
+    label: "Phone",
+    name: "phone",
+    placeholder: "Enter your phone number",
+    type: "tel",
+    value: "",
+  },
+  {
+    label: "Role",
+    name: "role",
+    placeholder: "Select your role",
+    type: "select",
+    options: [
+      { label: "Regular", value: "REGULAR" },
+      { label: "Admin", value: "ADMIN" },
+    ],
+  },
+];
+
+export const productFormInputs = [
+  {
+    label: "Title",
+    name: "title",
+    placeholder: "Enter the product title",
+    type: "text",
+    value: "",
+  },
+  {
+    label: "Description",
+    name: "description",
+    placeholder: "Enter the product description",
+    type: "textarea",
+    value: "",
+  },
+  {
+    label: "Price Before Sale",
+    name: "price_before_sale",
+    placeholder: "Enter the original price",
+    type: "number",
+    value: "",
+  },
+  {
+    label: "Discount Percentage",
+    name: "discountPercentage",
+    placeholder: "Enter the discount percentage",
+    type: "number",
+    value: "",
+  },
+  {
+    label: "Stock",
+    name: "stock",
+    placeholder: "Enter the stock quantity",
+    type: "number",
+    value: "",
+  },
+
+  {
+    label: "On Sale",
+    name: "onSale",
+    placeholder: "Is the product on sale?",
+    type: "select",
+    options: [
+      { label: "Yes", value: "true" },
+      { label: "No", value: "false" },
+    ],
+    value: "",
+    isMulti: false,
+    creatable: false,
+  },
+  {
+    label: "Category",
+    name: "category",
+    placeholder: "Select the product category",
+    type: "select",
+    options: [
+      { label: "Electronics", value: "ELECTRONICS" },
+      { label: "Fashion", value: "FASHION" },
+      { label: "Home & Garden", value: "HOME_GARDEN" },
+      { label: "Health & Beauty", value: "HEALTH_BEAUTY" },
+      { label: "Sports & Outdoors", value: "SPORTS_OUTDOORS" },
+      { label: "Other", value: "OTHER" },
+    ],
+    isMulti: true,
+    value: "",
+    creatable: true,
+  },
+  {
+    label: "Images",
+    name: "images",
+    placeholder: "Upload all images",
+    type: "file",
+    value: "",
+  },
+];
