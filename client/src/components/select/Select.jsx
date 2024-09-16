@@ -39,20 +39,36 @@ const customStyles = {
       backgroundColor: "#f1f1f1",
     },
   }),
-  multiValue: (provided, { data }) => ({
-    ...provided,
-    display: "flex",
-    alignItems: "center",
-    "&:before": {
-      content: '""',
-      display: "block",
-      width: "12px",
-      height: "12px",
-      backgroundColor: data.value,
-      marginRight: "8px",
-      borderRadius: "50%",
-    },
-  }),
+  multiValue: (provided, { data }) => {
+    const baseStyles = {
+      ...provided,
+      display: "flex",
+      alignItems: "center",
+      borderRadius: "5px",
+      position: "relative",
+    };
+
+    const conditionalStyles =
+      data.value && data.value.startsWith("#")
+        ? {
+            "&:before": {
+              content: '""',
+              display: "block",
+              width: "13px",
+              height: "13px",
+              backgroundColor: data.value,
+              marginLeft: "0.5em",
+              borderRadius: "30px",
+            },
+          }
+        : {};
+
+    return {
+      ...baseStyles,
+      ...conditionalStyles,
+    };
+  },
+
   multiValueLabel: (provided) => ({
     ...provided,
     color: "#333333",
@@ -129,22 +145,6 @@ const Select = ({
           onCreateOption={handleCreateOption}
           options={selectOptions}
           styles={customStyles}
-          formatOptionLabel={(option) => (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {isColor && (
-                <span
-                  style={{
-                    backgroundColor: option.value,
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    marginRight: "8px",
-                  }}
-                />
-              )}
-              {option.label}
-            </div>
-          )}
         />
       ) : (
         <SelectComponent
