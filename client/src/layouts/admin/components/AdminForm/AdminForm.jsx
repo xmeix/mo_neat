@@ -12,7 +12,7 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
     const { name, value, type, files } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "file" ? Array.from(files) : value,
+      [name]: type === "file" ? files : value,
     }));
   };
 
@@ -42,7 +42,6 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
           label={input.label}
           name={input.name}
           onChange={handleChange}
-          value={formData[input.name] || []}
         />
       );
     } else {
@@ -82,11 +81,11 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
   };
 
   return (
-    <div className="admin-form">
+    <form className="admin-form" onSubmit={handleSubmit}>
       <div className="admin-form-title">{title}</div>
       <div className="inputs">{renderFormInputs()}</div>
-      <button onClick={handleSubmit}>Create</button>
-    </div>
+      <Button text={"create"} type="submit" />
+    </form>
   );
 };
 
