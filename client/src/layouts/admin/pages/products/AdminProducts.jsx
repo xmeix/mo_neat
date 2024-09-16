@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./AdminProducts.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AdminForm from "../../components/AdminForm/AdminForm";
 import { productFormInputs } from "../../../../assets/data/formsData"; // Update this accordingly
 import Table from "../../../../components/table/Table";
@@ -10,7 +10,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useToast from "../../../../utils/hooks/toast/useToast";
 import { isValidProduct } from "../../../../utils/functions";
-const data = {
+import { addProduct } from "../../../../store/apiCalls/product";
+import { resetError, setError } from "../../../../store/slices/productSlice";
+
+const initData = {
   title: "",
   description: "",
   images: [],
@@ -30,87 +33,28 @@ const columns = [
   { header: "Discount - %", accessor: "discountPercentage" },
   { header: "Stock", accessor: "stock" },
   { header: "On Sale", accessor: "onSale" },
-  { header: "image", accessor: "img" },
-  { header: "created at", accessor: "createdAt" },
-  { header: "updated at", accessor: "updatedAt" },
+  { header: "Images", accessor: "images" },
+  { header: "Sizes", accessor: "sizes" },
+  { header: "Colors", accessor: "colors" },
+  { header: "Categories", accessor: "categories" },
+  { header: "Created At", accessor: "createdAt" },
+  { header: "Updated At", accessor: "updatedAt" },
 ];
+
 const AdminProducts = () => {
   const { Drawer, showDrawer, setShowDrawer } = useDrawer();
   const { Toast, showErrorToast, showSuccessToast } = useToast();
-
-  // const products = [];
+  const [formData, setFormData] = useState(initData);
+  const dispatch = useDispatch();
   const { products, loading, error, success } = useSelector(
     (state) => state.product
   );
-  // const products = [
-  //   {
-  //     id: 1,
-  //     title: "Product 1",
-  //     description: "High-quality leather bag",
-  //     price_before_sale: 100,
-  //     discountPercentage: 10,
-  //     stock: 20,
-  //     onSale: false,
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString(),
-  //     img: ["/dress.png"],
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Product 2",
-  //     description: "Premium running shoes",
-  //     price_before_sale: 150,
-  //     discountPercentage: 15,
-  //     stock: 15,
-  //     onSale: true,
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString(),
-  //     img: ["/dress.png"],
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Product 3",
-  //     description: "Wireless Bluetooth headphones",
-  //     price_before_sale: 80,
-  //     discountPercentage: 5,
-  //     stock: 30,
-  //     onSale: false,
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString(),
-  //     img: ["/dress.png"],
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Product 4",
-  //     description: "Stylish wristwatch with leather strap",
-  //     price_before_sale: 120,
-  //     discountPercentage: 20,
-  //     stock: 10,
-  //     onSale: true,
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString(),
-  //     img: ["/dress.png"],
-  //   },
-  //   {
-  //     id: 5,
-  //     title: "Product 5",
-  //     description: "4K UHD Smart TV",
-  //     price_before_sale: 600,
-  //     discountPercentage: 25,
-  //     stock: 5,
-  //     onSale: true,
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString(),
-  //     img: ["/dress.png"],
-  //   },
-  //   // Continue adding createdAt and updatedAt for each product...
-  // ];
 
   const actions = [
     {
       label: "View Product",
       icon: VisibilityIcon,
-      iconColor: "#00BFA6", // Teal
+      iconColor: "#00BFA6",
       onClick: (row) => {
         console.log("View Product", row);
       },
@@ -118,7 +62,7 @@ const AdminProducts = () => {
     {
       label: "Edit Product",
       icon: EditIcon,
-      iconColor: "#FFC400", // Golden Yellow
+      iconColor: "#FFC400",
       onClick: (row) => {
         console.log("Edit Product", row);
       },
@@ -127,7 +71,7 @@ const AdminProducts = () => {
       special: true,
       label: "Delete Product",
       icon: DeleteIcon,
-      iconColor: "#FF5252", // Bright Coral Red
+      iconColor: "#FF5252",
       onClick: (row) => {
         console.log("Delete Product", row);
       },
@@ -135,16 +79,48 @@ const AdminProducts = () => {
   ];
 
   const onCreate = () => {
+    setFormData(initData);
     setShowDrawer(true);
   };
-  const handleCreate = (formData) => {
-    console.log(formData);
-    console.log("creating...");
 
-    if (isValidProduct(formData)) {
-      console.log("is Valid");
-    } else console.log("isnt valid");
+  const handleCreate = async (data) => {
+    const formData = new FormData();
+
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("onSale", data.onSale);
+    formData.append("discountPercentage", data.discountPercentage);
+    formData.append("price_before_sale", data.price_before_sale);
+    formData.append("stock", data.stock);
+
+    data.categories.forEach((category, index) => {
+      formData.append(`categories[${index}]`, category);
+    });
+
+    data.sizes.forEach((size, index) => {
+      formData.append(`sizes[${index}]`, size);
+    });
+
+    data.colors.forEach((color, index) => {
+      formData.append(`colors[${index}]`, color);
+    });
+
+    data.images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+
+    await dispatch(addProduct(formData)).unwrap();
+    showSuccessToast("Product created successfully");
   };
+
+  useEffect(() => {
+    if (error) showErrorToast(error);
+    if (success) showSuccessToast(success);
+
+    return () => {
+      dispatch(resetError());
+    };
+  }, [error, dispatch, showErrorToast, success, showSuccessToast]);
 
   return (
     <div className="admin-products">
@@ -157,21 +133,31 @@ const AdminProducts = () => {
         unit="products"
         cardHeaders={["title", "description"]}
         banned={[
-          ["id", "img"],
-          ["description", "img", "createdAt", "updatedAt"],
+          ["id", "images"],
+          [
+            "description",
+            "images",
+            "createdAt",
+            "updatedAt",
+            "sizes",
+            "colors",
+            "categories",
+          ],
         ]}
         footer={["createdAt", "updatedAt"]}
+        special={["sizes", "categories", "colors"]}
         onCreate={onCreate}
       />
       {showDrawer && (
         <Drawer title="Add Product">
           <AdminForm
-            data={data}
+            data={formData}
             formInputs={productFormInputs}
             handleCreate={handleCreate}
           />
         </Drawer>
       )}
+      <Toast />
     </div>
   );
 };

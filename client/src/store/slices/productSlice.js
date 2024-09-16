@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllProducts } from "../apiCalls/product";
+import { addProduct, getAllProducts } from "../apiCalls/product";
 
 const productSlice = createSlice({
   name: "product",
@@ -7,7 +7,7 @@ const productSlice = createSlice({
     products: [],
     loading: false,
     error: null,
-    success: false,
+    success: null,
   },
   reducers: {
     reset: (state) => {
@@ -17,7 +17,7 @@ const productSlice = createSlice({
       state.success = null;
     },
     setError: (state, action) => {
-      state.error = action.payload.message;
+      state.error = action.payload.message || action.payload;
       state.success = null;
     },
     resetError: (state) => {
@@ -33,13 +33,25 @@ const productSlice = createSlice({
     builder.addCase(getAllProducts.fulfilled, (state, action) => {
       state.loading = false;
       state.products = action.payload.data;
-      state.success = action.payload.message;
     });
 
     builder.addCase(getAllProducts.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
       state.isLoggedIn = false;
+    });
+
+    builder.addCase(addProduct.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(addProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = action.payload.message;
+    });
+    builder.addCase(addProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
     });
   },
 });

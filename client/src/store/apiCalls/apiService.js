@@ -1,14 +1,18 @@
-const API_BASE_URL = "http://localhost:3002/api/";
+export const API_BASE_URL = "http://localhost:3002/api/";
+export const MEDIA_BASE_URL = "http://localhost:3002/public/";
 
 const fetchRequest = async (url, options = {}) => {
   console.log(`Fetching URL: ${url}`, options); // Log the URL and options
 
   try {
+    // If body is an instance of FormData, do not set Content-Type header
+    const isFormData = options.body instanceof FormData;
+
     const response = await fetch(url, {
       ...options,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        ...(!isFormData && { "Content-Type": "application/json" }), // Only set Content-Type if not FormData
         ...options.headers,
       },
     });
@@ -32,13 +36,13 @@ export const apiService = {
     post: (url, data, config) =>
       fetchRequest(API_BASE_URL + url, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: data instanceof FormData ? data : JSON.stringify(data),
         ...config,
       }),
     patch: (url, data, config) =>
       fetchRequest(API_BASE_URL + url, {
         method: "PATCH",
-        body: JSON.stringify(data),
+        body: data instanceof FormData ? data : JSON.stringify(data),
         ...config,
       }),
     delete: (url, config) =>
@@ -50,13 +54,13 @@ export const apiService = {
     post: (url, data, config) =>
       fetchRequest(API_BASE_URL + url, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: data instanceof FormData ? data : JSON.stringify(data),
         ...config,
       }),
     patch: (url, data, config) =>
       fetchRequest(API_BASE_URL + url, {
         method: "PATCH",
-        body: JSON.stringify(data),
+        body: data instanceof FormData ? data : JSON.stringify(data),
         ...config,
       }),
     delete: (url, config) =>

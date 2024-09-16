@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/", getAllProducts);
 
 // Admin Routes
-router.post("/", verifyCookieTokenAndAdmin, upload.any("image"), addProduct);
+router.post("/", verifyCookieTokenAndAdmin, upload.any("images"), addProduct);
 router.patch("/:id", verifyCookieTokenAndAdmin, editProduct);
 router.delete("/:id", verifyCookieTokenAndAdmin, deleteProduct);
 

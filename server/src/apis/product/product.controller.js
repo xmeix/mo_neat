@@ -1,6 +1,7 @@
 import prisma from "../../db/prismaClient.js";
 import AuthorizationError from "../../utils/errors/AuthorizationError.js";
 import ValidationError from "../../utils/errors/ValidationError.js";
+import { ProductValidation } from "../../validation/product.validation.js";
 const parseBoolean = (value) => {
   if (typeof value === "string") {
     return value.toLowerCase() === "true";
@@ -21,7 +22,7 @@ export const getAllProducts = async (req, res, next) => {
 };
 
 const categoriesIdsWCreation = (categories) => {
-  return categories.map(async (categoryTitle) => {
+  return categories?.map(async (categoryTitle) => {
     let category = await prisma.category.findUnique({
       where: { title: categoryTitle },
     });
@@ -50,8 +51,20 @@ export const addProduct = async (req, res, next) => {
       price_before_sale,
       discountPercentage,
     } = req.body;
+    //validation
+    console.log(req.body);
+    const { error } = ProductValidation.validate({
+      ...req.body,
+      onSale: parseBoolean(onSale),
+    });
 
-    const images = req.files.map((file) => file.path);
+    if (error) {
+      throw new ValidationError(error.details[0].message);
+    }
+
+    console.log(req.files);
+
+    const images = req.files.map((file) => "images/" + file.filename);
 
     const categoriesData = await Promise.all(
       categoriesIdsWCreation(categories)
@@ -167,4 +180,3 @@ export const deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
-

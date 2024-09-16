@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import "./Table.scss";
 import TableRow from "./tableRow/TableRow";
 import Pagination from "./pagination/Pagination";
@@ -18,6 +18,7 @@ const Table = ({
   banned,
   footer,
   onCreate,
+  special = [],
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -66,6 +67,7 @@ const Table = ({
                   banned={banned[0]}
                   footer={footer}
                   columns={neededColumns(0)}
+                  special={special}
                 />
               ))}
             </div>

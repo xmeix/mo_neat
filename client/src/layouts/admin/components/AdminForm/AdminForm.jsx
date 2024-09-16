@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import "./Form.scss";
 import Select from "../../../../components/select/Select";
 import Input from "../../../../components/input/Input";
@@ -12,7 +12,7 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
     const { name, value, type, files } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "file" ? files : value,
+      [name]: type === "file" ? Array.from(files) : value,
     }));
   };
 
@@ -42,6 +42,7 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
           label={input.label}
           name={input.name}
           onChange={handleChange}
+          value={formData[input.name] || []}
         />
       );
     } else {
@@ -66,13 +67,13 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
       if (input.children) {
         const shouldShowChildren = formData[input.name] === "true";
         return (
-          <>
+          <Fragment key={index}>
             {renderedInput}
             {shouldShowChildren &&
               input.children.map((childInput, childIndex) =>
                 renderInput(childInput, `${index}-${childIndex}`)
               )}
-          </>
+          </Fragment>
         );
       }
 
@@ -81,11 +82,11 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
   };
 
   return (
-    <form className="admin-form" onSubmit={handleSubmit}>
+    <div className="admin-form">
       <div className="admin-form-title">{title}</div>
       <div className="inputs">{renderFormInputs()}</div>
-      <Button text={"create"} type="submit" />
-    </form>
+      <button onClick={handleSubmit}>Create</button>
+    </div>
   );
 };
 

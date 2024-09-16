@@ -108,7 +108,7 @@ export const productFormInputs = [
       { label: "XL", value: "XL" },
       { label: "M", value: "M" },
     ],
-    isMulti: false,
+    isMulti: true,
     value: "",
     creatable: true,
   },

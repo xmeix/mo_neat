@@ -17,13 +17,17 @@ export const getAllProducts = createAsyncThunk(
 );
 
 export const addProduct = createAsyncThunk(
-  "products",
+  "products/add",
   async (body, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
+      console.log("body");
+      console.log(body);
       const res = await apiService.admin.post("products", body);
+      console.log(res);
       return res;
     } catch (error) {
+      console.log(error.message);
       console.error(error || "Something went wrong");
       return rejectWithValue(error || "Something went wrong");
     }

@@ -1,9 +1,22 @@
 import "./TableCard.scss";
 import { useState } from "react";
 import ActionMenu from "../actionMenu/ActionMenu";
+import {
+  API_BASE_URL,
+  MEDIA_BASE_URL,
+} from "../../../store/apiCalls/apiService";
 
-const TableCard = ({ row, actions, headers, banned, footer, columns }) => {
+const TableCard = ({
+  row,
+  actions,
+  headers,
+  banned,
+  footer,
+  columns,
+  special = [],
+}) => {
   const [showActions, setShowActions] = useState(false);
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Intl.DateTimeFormat("en-US", options).format(
@@ -12,8 +25,25 @@ const TableCard = ({ row, actions, headers, banned, footer, columns }) => {
   };
 
   const getLabel = (key) => {
-    return columns.filter((col) => col.accessor === key)[0].header;
+    return columns.find((col) => col.accessor === key)?.header;
   };
+
+  const formatValue = (key, value) => {
+    if (key === "colors") {
+      return value.map((color) => (
+        <span
+          key={color}
+          className="color-swatch"
+          style={{ backgroundColor: color }}
+          title={color}
+        ></span>
+      ));
+    } else if (key === "sizes" || key === "categories") {
+      return value.join(", ");
+    }
+    return value === true ? "YES" : value === false ? "NO" : value;
+  };
+
   return (
     <div className="table-card">
       <ActionMenu
@@ -26,7 +56,11 @@ const TableCard = ({ row, actions, headers, banned, footer, columns }) => {
       />
       <div className="card-headers-container">
         <div className="card-important">
-          <img src={row["img"][0]} alt="" className="card-image" />
+          <img
+            src={MEDIA_BASE_URL + row["images"][0]}
+            alt=""
+            className="card-image"
+          />
         </div>
         <div className="card-headers">
           {headers.map((header, index) => (
@@ -45,25 +79,35 @@ const TableCard = ({ row, actions, headers, banned, footer, columns }) => {
             !headers.includes(key) &&
             !banned.includes(key) &&
             !footer.includes(key) &&
+            special.includes(key) &&
             value !== null ? (
               <div className="card-field" key={index}>
                 <span className="field-label">{getLabel(key)}:</span>
-                <span className="field-value">
-                  {value === true ? "YES" : value === false ? "NO" : value}
-                </span>
+                <span className="field-value">{formatValue(key, value)}</span>
               </div>
             ) : null
           )}
-        </div>{" "}
+        </div>
       </div>
-
+      <div className="card-content card-content-hz">
+        {Object.entries(row).map(([key, value], index) =>
+          !headers.includes(key) &&
+          !banned.includes(key) &&
+          !footer.includes(key) &&
+          !special.includes(key) &&
+          value !== null ? (
+            <div className="card-field" key={index}>
+              <span className="field-label">{getLabel(key)}:</span>
+              <span className="field-value">{formatValue(key, value)}</span>
+            </div>
+          ) : null
+        )}
+      </div>
       <div className="card-footer">
         {Object.entries(row).map(([key, value], index) =>
           footer.includes(key) ? (
             <div className="card-field" key={index}>
-              <span className="field-label">
-                {key == "createdAt" ? "created at" : "updated at"}:
-              </span>
+              <span className="field-label">{getLabel(key)}:</span>
               <span className="field-value">
                 {value instanceof Date || !isNaN(Date.parse(value))
                   ? formatDate(value)
