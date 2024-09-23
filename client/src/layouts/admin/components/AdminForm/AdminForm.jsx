@@ -1,12 +1,19 @@
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import "./Form.scss";
 import Select from "../../../../components/select/Select";
 import Input from "../../../../components/input/Input";
 import Button from "../../../../components/button/Button";
 import ImagesInput from "../../../../components/imagesInput/ImagesInput";
 
-const AdminForm = ({ formInputs, data, title, handleCreate }) => {
+const AdminForm = ({
+  formInputs,
+  data,
+  title,
+  handleCreate,
+  validationMethod,
+}) => {
   const [formData, setFormData] = useState(data);
+  const [formErrors, setFormErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -18,46 +25,63 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleCreate(formData);
+
+    const validationErrors = validationMethod(formData);
+    if (validationErrors) {
+      setFormErrors(validationErrors);
+      console.log(formErrors);
+      return;
+    }
+
+    setFormErrors({});
+    handleCreate(formData, e);
   };
 
-  const renderInput = (input, index) => {
-    if (input.type === "select") {
-      return (
-        <Select
-          key={index}
-          label={input.label}
-          name={input.name}
-          options={input.options}
-          value={formData[input.name] || ""}
-          onChange={handleChange}
-          isMulti={input.isMulti}
-          creatable={input.creatable}
-        />
-      );
-    } else if (input.type === "file") {
-      return (
-        <ImagesInput
-          key={index}
-          label={input.label}
-          name={input.name}
-          onChange={handleChange}
-        />
-      );
-    } else {
-      return (
-        <Input
-          key={index}
-          label={input.label}
-          name={input.name}
-          placeholder={input.placeholder}
-          type={input.type}
-          value={formData[input.name] || ""}
-          onChange={handleChange}
-        />
-      );
-    }
-  };
+  const renderInput = useCallback(
+    (input, index) => {
+      const error = formErrors[input.name];
+
+      if (input.type === "select") {
+        return (
+          <Select
+            key={index}
+            label={input.label}
+            name={input.name}
+            options={input.options}
+            value={formData[input.name] || ""}
+            onChange={handleChange}
+            isMulti={input.isMulti}
+            creatable={input.creatable}
+            error={error}
+          />
+        );
+      } else if (input.type === "file") {
+        return (
+          <ImagesInput
+            key={index}
+            label={input.label}
+            name={input.name}
+            onChange={handleChange}
+            error={error}
+          />
+        );
+      } else {
+        return (
+          <Input
+            key={index}
+            label={input.label}
+            name={input.name}
+            placeholder={input.placeholder}
+            type={input.type}
+            value={formData[input.name] || ""}
+            onChange={handleChange}
+            error={error}
+          />
+        );
+      }
+    },
+    [formData, formErrors]
+  );
 
   const renderFormInputs = () => {
     return formInputs.map((input, index) => {
@@ -84,7 +108,7 @@ const AdminForm = ({ formInputs, data, title, handleCreate }) => {
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="admin-form-title">{title}</div>
       <div className="inputs">{renderFormInputs()}</div>
-      <Button text={"create"} type="submit" />
+      <Button text={"Create"} type="submit" />
     </form>
   );
 };

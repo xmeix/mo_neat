@@ -14,15 +14,20 @@ const errorHandler = (err, req, res, next) => {
     return res.status(err.statusCode).json({
       success: false,
       status: err.name,
-      message: err.message,
+      message: JSON.stringify({
+        key: "Error",
+        message: err.message,
+      }),
     });
   }
 
-  console.error("Unexpected error:", err);
   return res.status(500).json({
     success: false,
     status: "Unknown Error",
-    message: "An unexpected error occurred",
+    message: JSON.stringify({
+      key: "Unknown Error",
+      message: "An unexpected error occurred",
+    }),
   });
 };
 

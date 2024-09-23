@@ -7,11 +7,9 @@ export const getAllProducts = createAsyncThunk(
     const { rejectWithValue } = thunkAPI;
     try {
       const res = await apiService.public.get("products");
-      console.log(res);
       return res;
     } catch (error) {
-      console.error(error || "Something went wrong");
-      return rejectWithValue(error || "Something went wrong");
+       return rejectWithValue(error || "Something went wrong");
     }
   }
 );
@@ -21,15 +19,11 @@ export const addProduct = createAsyncThunk(
   async (body, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
-      console.log("body");
-      console.log(body);
       const res = await apiService.admin.post("products", body);
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log(error.message);
-      console.error(error || "Something went wrong");
-      return rejectWithValue(error || "Something went wrong");
+       return rejectWithValue(error || "Something went wrong");
     }
   }
 );

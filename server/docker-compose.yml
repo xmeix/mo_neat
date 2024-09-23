@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  db_cosm:
+  db_moneat:
     image: postgres:15
     restart: always
     environment:

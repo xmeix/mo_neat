@@ -76,9 +76,6 @@ const LoginPage = () => {
             type="submit"
             name="login-button"
             text="Login"
-            label={"New here?"}
-            labelink={"/auth/register"}
-            labelText="register"
           />
         </form>
         <Toast />

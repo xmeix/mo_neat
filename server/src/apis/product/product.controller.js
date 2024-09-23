@@ -59,7 +59,12 @@ export const addProduct = async (req, res, next) => {
     });
 
     if (error) {
-      throw new ValidationError(error.details[0].message);
+      const errorStr = JSON.stringify({
+        key: error.details[0].context.key,
+        value: error.details[0].message,
+      });
+
+      throw new ValidationError(errorStr);
     }
 
     console.log(req.files);
@@ -82,7 +87,7 @@ export const addProduct = async (req, res, next) => {
         stock: parseInt(stock),
         onSale: parseBoolean(onSale),
         price_before_sale: parseInt(price_before_sale),
-        discountPercentage: parseInt(discountPercentage),
+        discountPercentage: parseInt(discountPercentage) || 0,
         images,
       },
     });

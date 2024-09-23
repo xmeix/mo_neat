@@ -21,7 +21,7 @@ const initData = {
   categories: [],
   sizes: [],
   colors: [],
-  onSale: false,
+  onSale: "false",
   price_before_sale: 0,
   discountPercentage: 0,
 };
@@ -83,7 +83,8 @@ const AdminProducts = () => {
     setShowDrawer(true);
   };
 
-  const handleCreate = async (data) => {
+  const handleCreate = async (data, e) => {
+    e.preventDefault();
     const formData = new FormData();
 
     formData.append("title", data.title);
@@ -93,34 +94,35 @@ const AdminProducts = () => {
     formData.append("price_before_sale", data.price_before_sale);
     formData.append("stock", data.stock);
 
-    data.categories.forEach((category, index) => {
-      formData.append(`categories[${index}]`, category);
+    // Append array values
+    data.categories.forEach((category) => {
+      formData.append("categories[]", category);
     });
 
-    data.sizes.forEach((size, index) => {
-      formData.append(`sizes[${index}]`, size);
+    data.sizes.forEach((size) => {
+      formData.append("sizes[]", size);
     });
 
-    data.colors.forEach((color, index) => {
-      formData.append(`colors[${index}]`, color);
+    data.colors.forEach((color) => {
+      formData.append("colors[]", color);
     });
 
-    data.images.forEach((image, index) => {
-      formData.append(`images[${index}]`, image);
+    data.images.forEach((image) => {
+      formData.append("images[]", image);
     });
-
-    await dispatch(addProduct(formData)).unwrap();
-    showSuccessToast("Product created successfully");
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+    try {
+      dispatch(addProduct(formData)).unwrap();
+      setFormData(data);
+      showSuccessToast("Product created successfully");
+    } catch (error) {
+      setFormData(data);
+      console.error("Error creating product:", error);
+      // Handle error (e.g., show error toast)
+    }
   };
-
-  useEffect(() => {
-    if (error) showErrorToast(error);
-    if (success) showSuccessToast(success);
-
-    return () => {
-      dispatch(resetError());
-    };
-  }, [error, dispatch, showErrorToast, success, showSuccessToast]);
 
   return (
     <div className="admin-products">
@@ -154,10 +156,10 @@ const AdminProducts = () => {
             data={formData}
             formInputs={productFormInputs}
             handleCreate={handleCreate}
+            validationMethod={isValidProduct}
           />
         </Drawer>
       )}
-      <Toast />
     </div>
   );
 };

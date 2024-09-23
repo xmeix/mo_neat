@@ -12,20 +12,6 @@ export const login = createAsyncThunk("auth/login", async (body, thunkAPI) => {
   }
 });
 
-export const register = createAsyncThunk(
-  "auth/register",
-  async (body, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
-    try {
-      const res = await apiService.public.post("auth/register", body);
-      return res;
-    } catch (error) {
-      console.error(error || "Something went wrong");
-      return rejectWithValue(error || "Something went wrong");
-    }
-  }
-);
-
 export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {

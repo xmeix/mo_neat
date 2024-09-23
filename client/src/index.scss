@@ -154,6 +154,18 @@ textarea {
     }
   }
 }
+
+.input-error {
+  align-self: flex-end;
+  color: $notexist;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.error-border {
+  border-color: $error-color;
+}
+
 /**_____________________________________________________________________________________*/
 /* ScrollBar.css */
 

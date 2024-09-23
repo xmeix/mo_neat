@@ -1,18 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import "./AdminLayout.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import AdminSideNav from "../components/adminNav/AdminSideNav";
-import { getAllProducts } from "../../../store/apiCalls/product";
+
 const AdminLayout = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (isLoggedIn && user?.isAdmin) {
-      dispatch(getAllProducts());
-    }
-  }, [isLoggedIn, user?.isAdmin, dispatch]);
 
   if (!isLoggedIn || !user?.isAdmin) {
     return <Navigate to="/auth" />;

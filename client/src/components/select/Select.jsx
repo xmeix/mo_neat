@@ -10,14 +10,24 @@ const customStyles = {
     boxSizing: "border-box",
     backgroundColor: "#ffffff",
     color: "#333333",
-    border: `1px solid ${state.isFocused ? "#3550a1" : "#cccccc"}`,
+    border: `1px solid ${
+      state.selectProps.error
+        ? "#ff4d4f"
+        : state.isFocused
+        ? "#3550a1"
+        : "#cccccc"
+    }`, // Changes border color if error exists
     borderRadius: "4px",
     fontFamily: "inherit",
     fontSize: "14px",
     transition: "border-color 0.3s ease",
     boxShadow: "none",
     "&:hover": {
-      borderColor: state.isFocused ? "#3550a1" : "#cccccc",
+      borderColor: state.selectProps.error
+        ? "#ff4d4f"
+        : state.isFocused
+        ? "#3550a1"
+        : "#cccccc",
     },
     "&::placeholder": {
       fontSize: "14px",
@@ -68,7 +78,6 @@ const customStyles = {
       ...conditionalStyles,
     };
   },
-
   multiValueLabel: (provided) => ({
     ...provided,
     color: "#333333",
@@ -88,6 +97,7 @@ const Select = ({
   isMulti = false,
   creatable = false,
   isColor = false,
+  error,
 }) => {
   const [selectOptions, setSelectOptions] = useState(options);
 
@@ -145,6 +155,7 @@ const Select = ({
           onCreateOption={handleCreateOption}
           options={selectOptions}
           styles={customStyles}
+          error={error}
         />
       ) : (
         <SelectComponent
@@ -158,8 +169,11 @@ const Select = ({
           onChange={handleSelectChange}
           options={selectOptions}
           styles={customStyles}
+          error={error}
         />
       )}
+
+      {error && <span className="input-error">{error}</span>}
     </div>
   );
 };

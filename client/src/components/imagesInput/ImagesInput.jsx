@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./ImagesInput.scss";
 
-const ImagesInput = ({ label, name, onChange }) => {
+const ImagesInput = ({ label, name, onChange, error }) => {
   const [images, setImages] = useState([]);
 
   const handleSelectImages = (e) => {
@@ -69,7 +69,11 @@ const ImagesInput = ({ label, name, onChange }) => {
     <div className="images-input-container-wrapper input-group">
       {label && <label className="group-label">{label}</label>}
       <div
-        className="images-input-container"
+        className={
+          error
+            ? "images-input-container error-border"
+            : "images-input-container"
+        }
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -102,6 +106,7 @@ const ImagesInput = ({ label, name, onChange }) => {
           )}
         </div>
       </div>
+      {error && <span className="input-error">{error}</span>}
     </div>
   );
 };

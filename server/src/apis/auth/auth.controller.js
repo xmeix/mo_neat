@@ -15,13 +15,13 @@ export const logout = async (req, res, next) => {
   try {
     res.cookie("access_token", null, {
       expires: new Date(0),
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       httpOnly: true,
     });
     res.cookie("refresh_token", null, {
       expires: new Date(0),
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       httpOnly: true,
     });
@@ -122,14 +122,14 @@ export const login = async (req, res, next) => {
 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 5 * 60 * 1000,
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

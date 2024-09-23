@@ -17,15 +17,19 @@ const fetchRequest = async (url, options = {}) => {
       },
     });
 
+    // Store the response body once
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
+      // Handle error scenario
+      console.error(data.message || "Something went wrong");
+      throw new Error(data.message || "Error fetching data");
     }
 
-    return response.json();
+    return data;
   } catch (error) {
-    console.log("Fetch request failed:", error.message);
-    throw error;
+    console.error("Fetch request failed:", error.message);
+    throw error; // Re-throw the error to be handled by the calling code
   }
 };
 

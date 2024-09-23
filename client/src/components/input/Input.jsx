@@ -1,8 +1,8 @@
 import "./Input.scss";
 
-const Input = ({ value, label, name, placeholder, type, onChange }) => {
+const Input = ({ value, label, name, placeholder, type, onChange, error }) => {
   return (
-    <div className="input-group">
+    <div className={`input-group ${error ? "error" : ""}`}>
       {label && (
         <label className="group-label" htmlFor={name}>
           {label}
@@ -12,10 +12,11 @@ const Input = ({ value, label, name, placeholder, type, onChange }) => {
         type={type}
         value={value}
         name={name}
-        className="input-field"
+        className={error ? "input-field error-border" : "input-field"}
         placeholder={placeholder}
         onChange={onChange}
       />
+      {error && <span className="input-error">{error}</span>}
     </div>
   );
 };
