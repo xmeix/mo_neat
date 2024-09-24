@@ -20,7 +20,7 @@
     .card-important {
       flex: 1;
 
-      height: 130px;
+      height: 150px;
       width: 130px;
       overflow: hidden;
       border-radius: 5px;
@@ -28,7 +28,7 @@
       img {
         height: 100%;
         width: 100%;
-        object-fit: cover;
+        object-fit: contain;
       }
     }
     .card-headers {
@@ -113,11 +113,11 @@
   height: 24px;
   border-radius: 50%;
   margin-right: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid $muted-background-color;
   vertical-align: middle;
   cursor: pointer;
 }
 
 .color-swatch:hover {
-  border-color: #000;
+  opacity: 0.9;
 }

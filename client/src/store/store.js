@@ -16,7 +16,11 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { getAllProducts } from "./apiCalls/product.js";
+import {
+  addProduct,
+  deleteProduct,
+  getAllProducts,
+} from "./apiCalls/product.js";
 import { login } from "./apiCalls/auth.js";
 
 const persistConfig = {
@@ -33,14 +37,30 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const listenerMiddleware = createListenerMiddleware(); //using for when example, when someone loggs in we get all his events using path on asynch thunk
 
-listenerMiddleware.startListening({
-  actionCreator: login.fulfilled,
-  effect: async (action, listenerApi) => {
-    const { payload } = action;
-    console.log("listen ... dispatch products.");
-    listenerApi.dispatch(getAllProducts());
+listenerMiddleware.startListening(
+  {
+    actionCreator: login.fulfilled,
+    effect: async (action, listenerApi) => {
+      const { payload } = action;
+      console.log("listen ... dispatch products.");
+      listenerApi.dispatch(getAllProducts());
+    },
   },
-});
+  {
+    actionCreator: deleteProduct.fulfilled,
+    effect: async (listenerApi) => {
+      console.log("listen ... dispatch products.");
+      listenerApi.dispatch(getAllProducts());
+    },
+  },
+  {
+    actionCreator: addProduct.fulfilled,
+    effect: async ( listenerApi) => {
+      console.log("listen ... dispatch products.");
+      listenerApi.dispatch(getAllProducts());
+    },
+  }
+);
 
 export const store = configureStore({
   reducer: persistedReducer,

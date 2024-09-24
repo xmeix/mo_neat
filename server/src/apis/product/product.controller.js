@@ -59,12 +59,7 @@ export const addProduct = async (req, res, next) => {
     });
 
     if (error) {
-      const errorStr = JSON.stringify({
-        key: error.details[0].context.key,
-        value: error.details[0].message,
-      });
-
-      throw new ValidationError(errorStr);
+      throw new ValidationError(error.details[0].message);
     }
 
     console.log(req.files);

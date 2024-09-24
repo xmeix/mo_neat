@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addProduct, getAllProducts } from "../apiCalls/product";
+import { addProduct, deleteProduct, getAllProducts } from "../apiCalls/product";
 
 const productSlice = createSlice({
   name: "product",
@@ -50,6 +50,19 @@ const productSlice = createSlice({
       state.success = action.payload.message;
     });
     builder.addCase(addProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    });
+    builder.addCase(deleteProduct.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.success = null;
+    });
+    builder.addCase(deleteProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = action.payload.message; 
+    });
+    builder.addCase(deleteProduct.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     });

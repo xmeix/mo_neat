@@ -1,8 +1,7 @@
 import "./TableCard.scss";
 import { useState } from "react";
 import ActionMenu from "../actionMenu/ActionMenu";
-import {
-  API_BASE_URL,
+import { 
   MEDIA_BASE_URL,
 } from "../../../store/apiCalls/apiService";
 

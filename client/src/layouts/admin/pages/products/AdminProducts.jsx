@@ -10,7 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useToast from "../../../../utils/hooks/toast/useToast";
 import { isValidProduct } from "../../../../utils/functions";
-import { addProduct } from "../../../../store/apiCalls/product";
+import { addProduct, deleteProduct } from "../../../../store/apiCalls/product";
 import { resetError, setError } from "../../../../store/slices/productSlice";
 
 const initData = {
@@ -72,15 +72,25 @@ const AdminProducts = () => {
       label: "Delete Product",
       icon: DeleteIcon,
       iconColor: "#FF5252",
-      onClick: (row) => {
-        console.log("Delete Product", row);
-      },
+      onClick: (row) => handleDelete(row.id),
     },
   ];
 
   const onCreate = () => {
     setFormData(initData);
     setShowDrawer(true);
+  };
+
+  const handleDelete = async (id) => {
+    console.log("Delete Product", id);
+    try {
+      await dispatch(deleteProduct(id));
+      showSuccessToast("Product deleted successfully");
+    } catch (ero) {
+  
+      console.log("Error creating product:", ero);
+      showErrorToast(error || ero);
+    }
   };
 
   const handleCreate = async (data, e) => {
@@ -114,13 +124,12 @@ const AdminProducts = () => {
       console.log(`${key}: ${value}`);
     });
     try {
-      dispatch(addProduct(formData)).unwrap();
-      setFormData(data);
+      await dispatch(addProduct(formData)).unwrap();
       showSuccessToast("Product created successfully");
-    } catch (error) {
+    } catch (ero) {
       setFormData(data);
-      console.error("Error creating product:", error);
-      // Handle error (e.g., show error toast)
+      console.log("Error creating product:", ero);
+      showErrorToast(error || ero);
     }
   };
 
@@ -160,6 +169,7 @@ const AdminProducts = () => {
           />
         </Drawer>
       )}
+      <Toast />
     </div>
   );
 };

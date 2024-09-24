@@ -9,7 +9,7 @@ export const getAllProducts = createAsyncThunk(
       const res = await apiService.public.get("products");
       return res;
     } catch (error) {
-       return rejectWithValue(error || "Something went wrong");
+      return rejectWithValue(error || "Something went wrong");
     }
   }
 );
@@ -23,7 +23,21 @@ export const addProduct = createAsyncThunk(
 
       return res;
     } catch (error) {
-       return rejectWithValue(error || "Something went wrong");
+      return rejectWithValue(error || "Something went wrong");
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "products/delete",
+  async (body, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+      const res = await apiService.admin.delete(`products/${body}`);
+
+      return res;
+    } catch (error) {
+      return rejectWithValue(error || "Something went wrong");
     }
   }
 );
