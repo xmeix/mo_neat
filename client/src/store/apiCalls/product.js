@@ -19,6 +19,7 @@ export const addProduct = createAsyncThunk(
   async (body, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
+      console.log(body);
       const res = await apiService.admin.post("products", body);
 
       return res;
@@ -27,17 +28,29 @@ export const addProduct = createAsyncThunk(
     }
   }
 );
-
 export const deleteProduct = createAsyncThunk(
   "products/delete",
-  async (body, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+  async (productId, { rejectWithValue }) => {
     try {
-      const res = await apiService.admin.delete(`products/${body}`);
-
-      return res;
+      const response = await apiService.admin.delete(`products/${productId}`);
+      return response;
     } catch (error) {
-      return rejectWithValue(error || "Something went wrong");
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "products/update",
+  async (body, { rejectWithValue }) => {
+    try {
+      const response = await apiService.admin.patch(
+        `products/${body.productId}`,
+        body.body
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
 );

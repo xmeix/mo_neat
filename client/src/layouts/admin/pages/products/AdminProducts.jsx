@@ -42,9 +42,10 @@ const columns = [
 ];
 
 const AdminProducts = () => {
-  const { Drawer, showDrawer, setShowDrawer } = useDrawer();
+  const { Drawer, setShowDrawer } = useDrawer();
   const { Toast, showErrorToast, showSuccessToast } = useToast();
   const [formData, setFormData] = useState(initData);
+  const [drawerType, setDrawerType] = useState(null);
   const dispatch = useDispatch();
   const { products, loading, error, success } = useSelector(
     (state) => state.product
@@ -63,9 +64,7 @@ const AdminProducts = () => {
       label: "Edit Product",
       icon: EditIcon,
       iconColor: "#FFC400",
-      onClick: (row) => {
-        console.log("Edit Product", row);
-      },
+      onClick: (row) => onEdit(row),
     },
     {
       special: true,
@@ -79,6 +78,7 @@ const AdminProducts = () => {
   const onCreate = () => {
     setFormData(initData);
     setShowDrawer(true);
+    setDrawerType("add");
   };
 
   const handleDelete = async (id) => {
@@ -87,7 +87,6 @@ const AdminProducts = () => {
       await dispatch(deleteProduct(id));
       showSuccessToast("Product deleted successfully");
     } catch (ero) {
-  
       console.log("Error creating product:", ero);
       showErrorToast(error || ero);
     }
@@ -133,6 +132,17 @@ const AdminProducts = () => {
     }
   };
 
+  const onEdit = (row) => {
+    setDrawerType("edit");
+    setShowDrawer(true);
+    setFormData(row);
+    console.log(row);
+  };
+
+  const handleEdit = async (data, e) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="admin-products">
       <Table
@@ -159,13 +169,14 @@ const AdminProducts = () => {
         special={["sizes", "categories", "colors"]}
         onCreate={onCreate}
       />
-      {showDrawer && (
-        <Drawer title="Add Product">
+      {drawerType && (
+        <Drawer title={drawerType === "add" ? "Add Product" : "Edit Product"}>
           <AdminForm
             data={formData}
             formInputs={productFormInputs}
-            handleCreate={handleCreate}
+            handleCreate={drawerType === "add" ? handleCreate : handleEdit}
             validationMethod={isValidProduct}
+            btnTitle={drawerType === "add" ? "Add" : "Save"}
           />
         </Drawer>
       )}

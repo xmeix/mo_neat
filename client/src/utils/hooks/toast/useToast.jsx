@@ -32,10 +32,14 @@ const useToast = () => {
     return (
       <>
         {errorMessage && (
-          <div className="toast-error">{errorMessage || "Error!"}</div>
+          <div className="toast-error">
+            {errorMessage ? errorMessage : "Error!"}
+          </div>
         )}
         {successMessage && (
-          <div className="toast-success">{successMessage || "Success!"}</div>
+          <div className="toast-success">
+            {successMessage ? successMessage : "Success!"}
+          </div>
         )}
       </>
     );

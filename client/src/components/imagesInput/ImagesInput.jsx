@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ImagesInput.scss";
+import { MEDIA_BASE_URL } from "../../store/apiCalls/apiService";
 
-const ImagesInput = ({ label, name, onChange, error }) => {
+const ImagesInput = ({ label, name, onChange, error, imagesValue = [] }) => {
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    if (imagesValue.length > 0) {
+      setImages(imagesValue);
+    }
+  }, [imagesValue]);
 
   const handleSelectImages = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -23,7 +30,9 @@ const ImagesInput = ({ label, name, onChange, error }) => {
       });
     }
   };
-
+  const isFile = (image) => {
+    return image instanceof File;
+  };
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -95,7 +104,11 @@ const ImagesInput = ({ label, name, onChange, error }) => {
                 title="Click to remove"
               >
                 <img
-                  src={URL.createObjectURL(image)}
+                  src={
+                    isFile(image)
+                      ? URL.createObjectURL(image)
+                      : MEDIA_BASE_URL + image
+                  }
                   alt={`Preview ${index + 1}`}
                   className="image-preview"
                 />

@@ -37,30 +37,30 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const listenerMiddleware = createListenerMiddleware(); //using for when example, when someone loggs in we get all his events using path on asynch thunk
 
-listenerMiddleware.startListening(
-  {
-    actionCreator: login.fulfilled,
-    effect: async (action, listenerApi) => {
-      const { payload } = action;
-      console.log("listen ... dispatch products.");
-      listenerApi.dispatch(getAllProducts());
-    },
+listenerMiddleware.startListening({
+  actionCreator: login.fulfilled,
+  effect: async (action, listenerApi) => {
+    const { payload } = action;
+    console.log("listen ... dispatch products.");
+    listenerApi.dispatch(getAllProducts());
   },
-  {
-    actionCreator: deleteProduct.fulfilled,
-    effect: async (listenerApi) => {
-      console.log("listen ... dispatch products.");
-      listenerApi.dispatch(getAllProducts());
-    },
+});
+
+listenerMiddleware.startListening({
+  actionCreator: deleteProduct.fulfilled,
+  effect: async (action, listenerApi) => {
+    console.log("listen to delete products... dispatch products.");
+    listenerApi.dispatch(getAllProducts());
   },
-  {
-    actionCreator: addProduct.fulfilled,
-    effect: async ( listenerApi) => {
-      console.log("listen ... dispatch products.");
-      listenerApi.dispatch(getAllProducts());
-    },
-  }
-);
+});
+
+listenerMiddleware.startListening({
+  actionCreator: addProduct.fulfilled,
+  effect: async (action, listenerApi) => {
+    console.log("listen to add products... dispatch products.");
+    listenerApi.dispatch(getAllProducts());
+  },
+});
 
 export const store = configureStore({
   reducer: persistedReducer,

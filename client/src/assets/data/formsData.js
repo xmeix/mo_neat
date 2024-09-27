@@ -97,7 +97,6 @@ export const productFormInputs = [
       },
     ],
   },
-
   {
     label: "Sizes",
     name: "sizes",

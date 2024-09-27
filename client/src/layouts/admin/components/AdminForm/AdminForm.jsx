@@ -11,12 +11,16 @@ const AdminForm = ({
   title,
   handleCreate,
   validationMethod,
+  btnTitle = "Create",
 }) => {
   const [formData, setFormData] = useState(data);
   const [formErrors, setFormErrors] = useState({});
-
+  console.log(formData);
   const handleChange = (e) => {
+    console.log("handling change...");
     const { name, value, type, files } = e.target;
+    console.log(name, value, type, files);
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: type === "file" ? files : value,
@@ -29,7 +33,6 @@ const AdminForm = ({
     const validationErrors = validationMethod(formData);
     if (validationErrors) {
       setFormErrors(validationErrors);
-      console.log(formErrors);
       return;
     }
 
@@ -40,6 +43,15 @@ const AdminForm = ({
   const renderInput = useCallback(
     (input, index) => {
       const error = formErrors[input.name];
+      const getValue = () => {
+        if (Array.isArray(formData[input.name])) {
+          return formData[input.name];
+        } else if (typeof formData[input.name] === "boolean") {
+          return formData[input.name] ? "true" : "false";
+        } else {
+          return formData[input.name] || "";
+        }
+      };
 
       if (input.type === "select") {
         return (
@@ -48,7 +60,7 @@ const AdminForm = ({
             label={input.label}
             name={input.name}
             options={input.options}
-            value={formData[input.name] || ""}
+            value={getValue()}
             onChange={handleChange}
             isMulti={input.isMulti}
             creatable={input.creatable}
@@ -63,6 +75,7 @@ const AdminForm = ({
             name={input.name}
             onChange={handleChange}
             error={error}
+            imagesValue={formData[input.name]}
           />
         );
       } else {
@@ -108,7 +121,7 @@ const AdminForm = ({
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="admin-form-title">{title}</div>
       <div className="inputs">{renderFormInputs()}</div>
-      <Button text={"Create"} type="submit" />
+      <Button text={btnTitle} type="submit" />
     </form>
   );
 };

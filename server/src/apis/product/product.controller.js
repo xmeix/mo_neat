@@ -10,10 +10,21 @@ const parseBoolean = (value) => {
 };
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: {
+        categories: true, // This includes the related categories
+      },
+    });
+
+    // Transform products to only include category titles
+    const transformedProducts = products.map((product) => ({
+      ...product,
+      categories: product.categories.map((category) => category.title), // Extract the titles
+    }));
+
     return res.status(200).json({
       success: true,
-      data: products,
+      data: transformedProducts,
       message: "Products retrieved successfully",
     });
   } catch (error) {
@@ -160,9 +171,12 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    console.log("deleting this id " + id);
     const product = await prisma.product.findUnique({
       where: { id: parseInt(id) },
     });
+    console.log("product");
+    console.log(product);
 
     if (!product) {
       throw new ValidationError("Product not found!");
@@ -171,9 +185,11 @@ export const deleteProduct = async (req, res, next) => {
     await prisma.product.delete({
       where: { id: parseInt(id) },
     });
+    console.log("product deleted");
 
     return res.status(200).json({
       success: true,
+      data: null,
       message: "Product deleted successfully",
     });
   } catch (error) {
