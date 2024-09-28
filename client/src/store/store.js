@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice.js";
 import productReducer from "./slices/productSlice.js";
+import couponReducer from "./slices/couponSlice.js";
 import {
   persistStore,
   persistReducer,
@@ -16,12 +17,9 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import {
-  addProduct,
-  deleteProduct,
-  getAllProducts,
-} from "./apiCalls/product.js";
+import { getAllProducts } from "./apiCalls/product.js";
 import { login } from "./apiCalls/auth.js";
+import { getAllCoupons } from "./apiCalls/coupon.js";
 
 const persistConfig = {
   key: "root",
@@ -32,6 +30,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
+  coupon: couponReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -43,10 +42,10 @@ listenerMiddleware.startListening({
     const { payload } = action;
     console.log("listen ... dispatch products.");
     listenerApi.dispatch(getAllProducts());
+    console.log("listen ... dispatch coupons.");
+    listenerApi.dispatch(getAllCoupons());
   },
 });
- 
- 
 
 export const store = configureStore({
   reducer: persistedReducer,

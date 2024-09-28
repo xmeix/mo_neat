@@ -9,6 +9,9 @@ import LoginPage from "./layouts/auth/pages/login/LoginPage";
 import AdminLayout from "./layouts/admin/layout/AdminLayout";
 import AdminHome from "./layouts/admin/pages/home/AdminHome";
 import AdminProducts from "./layouts/admin/pages/products/AdminProducts";
+import AdminCoupons from "./layouts/admin/pages/coupons/AdminCoupons";
+import AdminWilayas from "./layouts/admin/pages/geo/wilaya/AdminWilayas";
+import AdminStopDesks from "./layouts/admin/pages/geo/stopDesks/AdminStopDesks";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +48,18 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <AdminProducts />,
+      },
+      {
+        path: "coupons",
+        element: <AdminCoupons />,
+      },
+      {
+        path: "geographical/wilayas",
+        element: <AdminWilayas />,
+      },
+      {
+        path: "geographical/stopDesks",
+        element: <AdminStopDesks />,
       },
     ],
   },

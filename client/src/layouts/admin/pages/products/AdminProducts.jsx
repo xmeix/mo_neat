@@ -91,7 +91,7 @@ const AdminProducts = () => {
       await dispatch(deleteProduct(id));
       showSuccessToast("Product deleted successfully");
     } catch (ero) {
-      console.log("Error creating product:", ero);
+      console.log("Error deleting product:", ero);
       showErrorToast(error || ero);
     }
   };
@@ -187,7 +187,7 @@ const AdminProducts = () => {
         setShowDrawer(false);
       } catch (ero) {
         setFormData(data);
-        console.log("Error creating product:", ero);
+        console.log("Error updating product:", ero);
         showErrorToast(error || ero);
       }
     }

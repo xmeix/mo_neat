@@ -4,6 +4,7 @@ import {
   createCoupon,
   deleteCoupon,
   getAllCoupons,
+  updateCoupon,
 } from "./coupon.controller.js";
 
 const router = express.Router();
@@ -12,5 +13,5 @@ const router = express.Router();
 router.get("/", verifyCookieTokenAndAdmin, getAllCoupons);
 router.post("/", verifyCookieTokenAndAdmin, createCoupon);
 router.delete("/:id", verifyCookieTokenAndAdmin, deleteCoupon);
-
+router.patch("/:id", verifyCookieTokenAndAdmin, updateCoupon);
 export default router;

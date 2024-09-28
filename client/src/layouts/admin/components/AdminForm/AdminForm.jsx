@@ -34,6 +34,8 @@ const AdminForm = ({
       return;
     }
 
+    console.log("formDataAfterValidation");
+    console.log(formData);
     setFormErrors({});
     handleCreate(formData, e);
   };
@@ -46,6 +48,13 @@ const AdminForm = ({
           return formData[input.name];
         } else if (typeof formData[input.name] === "boolean") {
           return formData[input.name] ? "true" : "false";
+        } else if (input.type === "date") {
+          const dateValue = new Date(formData[input.name]);
+          if (!isNaN(dateValue)) {
+            return dateValue.toISOString().split("T")[0];
+          } else {
+            return formData[input.name];
+          }
         } else {
           return formData[input.name] || "";
         }
@@ -84,7 +93,7 @@ const AdminForm = ({
             name={input.name}
             placeholder={input.placeholder}
             type={input.type}
-            value={formData[input.name] || ""}
+            value={getValue()}
             onChange={handleChange}
             error={error}
           />

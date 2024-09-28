@@ -150,3 +150,41 @@ export const productFormInputs = [
     value: "",
   },
 ];
+
+export const couponFormInputs = [
+  {
+    label: "Coupon Name",
+    name: "name",
+    placeholder: "Enter the coupon name",
+    type: "text",
+    value: "",
+  },
+  {
+    label: "Coupon Code",
+    name: "code",
+    placeholder: "Enter the coupon code",
+    type: "text",
+    value: "",
+  },
+  {
+    label: "Discount Percentage",
+    name: "discountPercentage",
+    placeholder: "Enter the discount percentage",
+    type: "number",
+    value: "",
+  },
+  {
+    label: "Description",
+    name: "description",
+    placeholder: "Enter the coupon description",
+    type: "textarea",
+    value: "",
+  },
+  {
+    label: "Expiry Date",
+    name: "expiryDate",
+    placeholder: "Enter the expiry date (YYYY-MM-DD)",
+    type: "date",
+    value: "",
+  },
+];

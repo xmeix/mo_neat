@@ -43,8 +43,7 @@ const productSlice = createSlice({
     builder.addCase(getAllProducts.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
-      state.isLoggedIn = false;
-    });
+     });
 
     builder.addCase(addProduct.pending, (state) => {
       state.loading = true;

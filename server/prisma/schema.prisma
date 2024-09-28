@@ -50,7 +50,7 @@ model Order {
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-
+ 
 }
 model StopDesk {
   id               Int              @id @default(autoincrement())
@@ -62,8 +62,7 @@ model StopDesk {
 
   Order Order[]
 }
-
-//add new wilayas //add new communes controllers
+ 
 model Wilaya {
   id               Int              @id @default(autoincrement())
 
@@ -134,6 +133,8 @@ model Coupon {
   expiryDate          DateTime
 
   orders              Order[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
  

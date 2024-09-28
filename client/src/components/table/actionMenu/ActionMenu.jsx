@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import "./ActionMenu.scss";
 import { MoreVert } from "@mui/icons-material";
 
@@ -8,8 +9,22 @@ const ActionMenu = ({
   row,
   type = "default",
 }) => {
+  const actionRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionRef.current && !actionRef.current.contains(event.target)) {
+        setShowActions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowActions]);
+
   return (
-    <div className="action-menu">
+    <div className="action-menu" ref={actionRef}>
       {type !== "buttons" && (
         <>
           <MoreVert

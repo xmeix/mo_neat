@@ -23,6 +23,9 @@ export const createCoupon = async (req, res, next) => {
       where: { code: code },
     });
 
+    console.log("existingCoupon");
+    console.log(existingCoupon);
+
     if (existingCoupon) {
       throw new ValidationError("Coupon code already exists.");
     }
@@ -32,7 +35,7 @@ export const createCoupon = async (req, res, next) => {
       data: {
         code,
         name,
-        discountPercentage,
+        discountPercentage: parseInt(discountPercentage),
         description,
         expiryDate: new Date(expiryDate),
       },
@@ -47,6 +50,42 @@ export const createCoupon = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateCoupon = async (req, res, next) => {
+  try {
+    const { id } = req.params;  
+    const { code, name, discountPercentage, description, expiryDate } =
+      req.body;
+ 
+    const existingCoupon = await prisma.coupon.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!existingCoupon) {
+      throw new ValidationError("Coupon not found.");
+    }
+ 
+    const updatedCoupon = await prisma.coupon.update({
+      where: { id: parseInt(id) },
+      data: {
+        code,
+        name,
+        discountPercentage: parseInt(discountPercentage),
+        description,
+        expiryDate: new Date(expiryDate),
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: updatedCoupon,
+      message: "Coupon updated successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteCoupon = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -65,6 +104,7 @@ export const deleteCoupon = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
+      data: id,
       message: "coupon deleted successfully",
     });
   } catch (error) {

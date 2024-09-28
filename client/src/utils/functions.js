@@ -13,11 +13,16 @@ export const isValidProduct = (data) => {
     errors.description = "Description is required.";
   }
 
-  if (isEmpty([data.price_before_sale]) || data.price_before_sale < 0) {
-    errors.price_before_sale = "Price must be a positive number.";
+  if (isEmpty([data.price_before_sale]) || data.price_before_sale <= 0) {
+    errors.price_before_sale =
+      "Price must be a positive number and superior to 0";
   }
 
-  if (data.onSale === "true" && isEmpty([data.discountPercentage])) {
+  if (
+    (data.onSale === "true" && isEmpty([data.discountPercentage])) ||
+    (data.onSale === "true" && data.discountPercentage > 100) ||
+    (data.onSale === "true" && data.discountPercentage <= 0)
+  ) {
     errors.discountPercentage =
       "Discount percentage must be between 0 and 100.";
   }
@@ -49,11 +54,54 @@ export const isValidProduct = (data) => {
   if (!Array.isArray(data.images) || isEmpty([data.images])) {
     errors.images = "At least one image is required.";
   }
-
-  // Return errors object, empty object means valid product
   return Object.keys(errors).length === 0 ? null : errors;
 };
+export const formatDate = (dateString) => {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(dateString));
+};
+export const isValidCoupon = (data) => {
+  const errors = {};
 
+  if (isEmpty([data.name]) || data.name.trim() === "") {
+    errors.name = "Coupon name is required.";
+  }
+
+  if (isEmpty([data.code]) || data.code.trim() === "") {
+    errors.code = "Coupon code is required.";
+  } else {
+    data.code = data.code.toUpperCase().trim();
+
+    const isValidCode = /^[A-Z0-9]+$/.test(data.code);
+    if (!isValidCode) {
+      errors.code = "Coupon code must contain only letters and numbers.";
+    }
+  }
+  if (
+    isEmpty([data.discountPercentage]) ||
+    data.discountPercentage <= 0 ||
+    data.discountPercentage > 100
+  ) {
+    errors.discountPercentage =
+      "Discount percentage must be a positive number between 1 and 100.";
+  }
+
+  if (data.description && data.description.trim() === "") {
+    errors.description = "Description cannot be empty if provided.";
+  }
+
+  if (isEmpty([data.expiryDate]) || !isValidDate(data.expiryDate)) {
+    errors.expiryDate = "A valid expiry date is required.";
+  } else if (new Date(data.expiryDate) < new Date()) {
+    errors.expiryDate = "Expiry date must be in the future.";
+  }
+
+  return Object.keys(errors).length === 0 ? null : errors;
+};
+export const isValidDate = (date) => {
+  const parsedDate = new Date(date);
+  return !isNaN(parsedDate.getTime());
+};
 export const isSameProduct = (obj1, obj2) => {
   if (obj1 === obj2) return true;
 
@@ -117,3 +165,5 @@ export const parseError = (error) => {
 
   return { key: key, value: value };
 };
+export const isISODate = (str) =>
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(str);

@@ -3,6 +3,7 @@ import "./../Table.scss";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import ActionMenu from "../actionMenu/ActionMenu";
+import { formatDate, isISODate } from "../../../utils/functions";
 
 const TableRow = ({ row, actions, columns }) => {
   const [showActions, setShowActions] = useState(false);
@@ -19,6 +20,8 @@ const TableRow = ({ row, actions, columns }) => {
             <HighlightOffRoundedIcon className="table-icon notexist" />
           ) : e === true ? (
             <CheckCircleOutlineRoundedIcon className="table-icon exists" />
+          ) : e instanceof Date || (typeof e === "string" && isISODate(e)) ? (
+            formatDate(e)
           ) : (
             e
           )}

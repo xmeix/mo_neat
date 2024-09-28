@@ -26,7 +26,7 @@ const AdminSideNav = () => {
   const handleClickOutside = (event) => {
     if (navRef.current && !navRef.current.contains(event.target)) {
       setIsNavExpanded(false);
-    }
+    } 
   };
 
   useEffect(() => {

@@ -1,9 +1,8 @@
 import "./TableCard.scss";
 import { useState } from "react";
 import ActionMenu from "../actionMenu/ActionMenu";
-import { 
-  MEDIA_BASE_URL,
-} from "../../../store/apiCalls/apiService";
+import { MEDIA_BASE_URL } from "../../../store/apiCalls/apiService";
+import { formatDate, isISODate } from "../../../utils/functions";
 
 const TableCard = ({
   row,
@@ -15,13 +14,6 @@ const TableCard = ({
   special = [],
 }) => {
   const [showActions, setShowActions] = useState(false);
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Intl.DateTimeFormat("en-US", options).format(
-      new Date(dateString)
-    );
-  };
 
   const getLabel = (key) => {
     return columns.find((col) => col.accessor === key)?.header;
@@ -54,13 +46,15 @@ const TableCard = ({
         type="buttons"
       />
       <div className="card-headers-container">
-        <div className="card-important">
-          <img
-            src={MEDIA_BASE_URL + row["images"][0]}
-            alt=""
-            className="card-image"
-          />
-        </div>
+        {row["images"] && (
+          <div className="card-important">
+            <img
+              src={MEDIA_BASE_URL + row["images"][0]}
+              alt=""
+              className="card-image"
+            />
+          </div>
+        )}
         <div className="card-headers">
           {headers.map((header, index) => (
             <div
@@ -82,7 +76,12 @@ const TableCard = ({
             value !== null ? (
               <div className="card-field" key={index}>
                 <span className="field-label">{getLabel(key)}:</span>
-                <span className="field-value">{formatValue(key, value)}</span>
+                <span className="field-value">
+                  {value instanceof Date ||
+                  (typeof value === "string" && isISODate(value))
+                    ? formatDate(value)
+                    : formatValue(key, value)}
+                </span>
               </div>
             ) : null
           )}
@@ -97,7 +96,12 @@ const TableCard = ({
           value !== null ? (
             <div className="card-field" key={index}>
               <span className="field-label">{getLabel(key)}:</span>
-              <span className="field-value">{formatValue(key, value)}</span>
+              <span className="field-value">
+                {value instanceof Date ||
+                (typeof value === "string" && isISODate(value))
+                  ? formatDate(value)
+                  : formatValue(key, value)}
+              </span>
             </div>
           ) : null
         )}
