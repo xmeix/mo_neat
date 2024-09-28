@@ -9,8 +9,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useToast from "../../../../utils/hooks/toast/useToast";
-import { isValidProduct } from "../../../../utils/functions";
-import { addProduct, deleteProduct } from "../../../../store/apiCalls/product";
+import { isSameProduct, isValidProduct } from "../../../../utils/functions";
+import {
+  addProduct,
+  deleteProduct,
+  updateProduct,
+} from "../../../../store/apiCalls/product";
 import { resetError, setError } from "../../../../store/slices/productSlice";
 
 const initData = {
@@ -43,7 +47,7 @@ const columns = [
 
 const AdminProducts = () => {
   const { Drawer, setShowDrawer } = useDrawer();
-  const { Toast, showErrorToast, showSuccessToast } = useToast();
+  const { Toast, showErrorToast, showSuccessToast, showInfoToast } = useToast();
   const [formData, setFormData] = useState(initData);
   const [drawerType, setDrawerType] = useState(null);
   const dispatch = useDispatch();
@@ -125,6 +129,7 @@ const AdminProducts = () => {
     try {
       await dispatch(addProduct(formData)).unwrap();
       showSuccessToast("Product created successfully");
+      setShowDrawer(false);
     } catch (ero) {
       setFormData(data);
       console.log("Error creating product:", ero);
@@ -136,18 +141,66 @@ const AdminProducts = () => {
     setDrawerType("edit");
     setShowDrawer(true);
     setFormData(row);
-    console.log(row);
   };
 
   const handleEdit = async (data, e) => {
     e.preventDefault();
-  };
 
+    if (isSameProduct(data, formData)) {
+      showInfoToast("No changes have been made to the product, yet!");
+      return;
+    } else {
+      const newformData = new FormData();
+
+      newformData.append("id", data.id);
+      newformData.append("title", data.title);
+      newformData.append("description", data.description);
+      newformData.append("onSale", data.onSale);
+      newformData.append("discountPercentage", data.discountPercentage);
+      newformData.append("price_before_sale", data.price_before_sale);
+      newformData.append("stock", data.stock);
+
+      // Append array values
+      data.categories.forEach((category) => {
+        newformData.append("categories[]", category);
+      });
+
+      data.sizes.forEach((size) => {
+        newformData.append("sizes[]", size);
+      });
+
+      data.colors.forEach((color) => {
+        newformData.append("colors[]", color);
+      });
+
+      data.images.forEach((image) => {
+        newformData.append("images[]", image);
+      });
+      newformData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+      });
+      try {
+        await dispatch(
+          updateProduct({ body: newformData, id: data.id })
+        ).unwrap();
+        showSuccessToast("Product updated successfully");
+        setShowDrawer(false);
+      } catch (ero) {
+        setFormData(data);
+        console.log("Error creating product:", ero);
+        showErrorToast(error || ero);
+      }
+    }
+  };
+  const transformedProducts = products.map((product) => ({
+    ...product,
+    categories: product.categories.map((category) => category.title), // Show only titles
+  }));
   return (
     <div className="admin-products">
       <Table
         columns={columns}
-        data={products}
+        data={transformedProducts}
         actions={actions}
         rowsPerPage={5}
         title="Product Management"

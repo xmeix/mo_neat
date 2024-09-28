@@ -37,6 +37,12 @@ export const isValidProduct = (data) => {
 
   if (!Array.isArray(data.colors) || isEmpty([data.colors])) {
     errors.colors = "At least one color is required.";
+  } else {
+    //check the colors: has to be true
+    const isValid = data.colors.every((e, i) => isValidHex(e));
+    if (!isValid) {
+      errors.colors = "One of the colors isn't correct.";
+    }
   }
 
   // Check for image uploads
@@ -46,6 +52,32 @@ export const isValidProduct = (data) => {
 
   // Return errors object, empty object means valid product
   return Object.keys(errors).length === 0 ? null : errors;
+};
+
+export const isSameProduct = (obj1, obj2) => {
+  if (obj1 === obj2) return true;
+
+  if (
+    typeof obj1 !== "object" ||
+    obj1 === null ||
+    typeof obj2 !== "object" ||
+    obj2 === null
+  ) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  for (let key of keys1) {
+    if (!keys2.includes(key) || !isSameProduct(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 export const isEmpty = (array) => {

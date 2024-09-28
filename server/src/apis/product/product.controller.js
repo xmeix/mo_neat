@@ -1,6 +1,7 @@
 import prisma from "../../db/prismaClient.js";
 import AuthorizationError from "../../utils/errors/AuthorizationError.js";
 import ValidationError from "../../utils/errors/ValidationError.js";
+import { deleteImageFromStorage } from "../../utils/uploadVars.js";
 import { ProductValidation } from "../../validation/product.validation.js";
 const parseBoolean = (value) => {
   if (typeof value === "string") {
@@ -12,19 +13,13 @@ export const getAllProducts = async (req, res, next) => {
   try {
     const products = await prisma.product.findMany({
       include: {
-        categories: true, // This includes the related categories
+        categories: true,
       },
     });
 
-    // Transform products to only include category titles
-    const transformedProducts = products.map((product) => ({
-      ...product,
-      categories: product.categories.map((category) => category.title), // Extract the titles
-    }));
-
     return res.status(200).json({
       success: true,
-      data: transformedProducts,
+      data: products,
       message: "Products retrieved successfully",
     });
   } catch (error) {
@@ -32,8 +27,8 @@ export const getAllProducts = async (req, res, next) => {
   }
 };
 
-const categoriesIdsWCreation = (categories) => {
-  return categories?.map(async (categoryTitle) => {
+const categoriesIdsWCreation = async (categories) => {
+  const categoriesPromises = categories.map(async (categoryTitle) => {
     let category = await prisma.category.findUnique({
       where: { title: categoryTitle },
     });
@@ -46,9 +41,10 @@ const categoriesIdsWCreation = (categories) => {
 
     return { id: category.id };
   });
+
+  return Promise.all(categoriesPromises);
 };
 
-//add product to a certain category and if theres no category it creates a new one
 export const addProduct = async (req, res, next) => {
   try {
     const {
@@ -62,8 +58,7 @@ export const addProduct = async (req, res, next) => {
       price_before_sale,
       discountPercentage,
     } = req.body;
-    //validation
-    console.log(req.body);
+
     const { error } = ProductValidation.validate({
       ...req.body,
       onSale: parseBoolean(onSale),
@@ -73,14 +68,12 @@ export const addProduct = async (req, res, next) => {
       throw new ValidationError(error.details[0].message);
     }
 
-    console.log(req.files);
-
     const images = req.files.map((file) => "images/" + file.filename);
 
-    const categoriesData = await Promise.all(
-      categoriesIdsWCreation(categories)
-    );
+    // Resolving category IDs or creating new categories
+    const categoriesData = await categoriesIdsWCreation(categories);
 
+    // Creating product and including categories in the response
     const product = await prisma.product.create({
       data: {
         title,
@@ -93,9 +86,12 @@ export const addProduct = async (req, res, next) => {
         stock: parseInt(stock),
         onSale: parseBoolean(onSale),
         price_before_sale: parseInt(price_before_sale),
-        discountPercentage: parseInt(discountPercentage) || 0,
+        discountPercentage: parseBoolean(onSale)
+          ? parseInt(discountPercentage)
+          : 0,
         images,
       },
+      include: { categories: true },
     });
 
     return res.status(201).json({
@@ -110,6 +106,8 @@ export const addProduct = async (req, res, next) => {
 
 export const editProduct = async (req, res, next) => {
   try {
+    console.log("here to change");
+
     const { id } = req.params;
     const {
       title,
@@ -121,52 +119,77 @@ export const editProduct = async (req, res, next) => {
       categories,
       sizes,
       colors,
+      images: oldImages = [],
     } = req.body;
-    const images = req.files ? req.files.map((file) => file.path) : undefined;
 
-    const categoriesData = await Promise.all(
-      categoriesIdsWCreation(categories)
+    //here we have to get the products actual images
+    //if the oldImages doesnt include one of them than we delete them
+    const existingProduct = await prisma.product.findUnique({
+      where: { id: parseInt(id) },
+      select: { images: true },
+    });
+
+    if (!existingProduct) {
+      throw new ValidationError("Product not found");
+    }
+
+    const actualImagesToRemove = existingProduct.images.filter(
+      (e) => !oldImages.includes(e)
     );
 
-    const product = await prisma.product.findUnique({
-      where: { id: parseInt(id) },
-    });
-    if (!product) {
-      throw new ValidationError("Product not found!");
-    }
-    if (!req.user.isAdmin) {
-      throw new AuthorizationError(
-        "You do not have permission to update this product!"
-      );
-    }
+    const newImages = req.files
+      ? req.files.map((file) => "images/" + file.filename)
+      : [];
 
-    const updatedProduct = await prisma.product.update({
+    const updatedImages = existingProduct.images
+      .filter((image) => oldImages?.includes(image))
+      .concat(newImages);
+
+    const categoriesData = await categoriesIdsWCreation(categories);
+
+    console.log("categoriesData");
+    console.log(categoriesData);
+
+    const product = await prisma.product.update({
       where: { id: parseInt(id) },
       data: {
         title,
         description,
-        images,
-        stock,
+        stock: parseInt(stock),
+        onSale: parseBoolean(onSale),
+        price_before_sale: parseInt(price_before_sale),
+        discountPercentage: parseBoolean(onSale)
+          ? parseInt(discountPercentage)
+          : 0,
+        images: updatedImages,
         categories: {
           connect: categoriesData,
         },
         sizes,
         colors,
-        price_before_sale,
-        onSale,
-        discountPercentage,
       },
+      include: { categories: true },
     });
+
+    console.log("product");
+    console.log(product);
+
+    actualImagesToRemove.forEach((image) => {
+      deleteImageFromStorage(image);
+    });
+
+    console.log("dfsldgs");
 
     return res.status(200).json({
       success: true,
-      data: updatedProduct,
+      data: product,
       message: "Product updated successfully",
     });
   } catch (error) {
     next(error);
   }
 };
+
 export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -175,21 +198,22 @@ export const deleteProduct = async (req, res, next) => {
     const product = await prisma.product.findUnique({
       where: { id: parseInt(id) },
     });
-    console.log("product");
-    console.log(product);
 
     if (!product) {
       throw new ValidationError("Product not found!");
     }
 
+    product.images.forEach((image) => {
+      deleteImageFromStorage(image);
+    });
+
     await prisma.product.delete({
       where: { id: parseInt(id) },
     });
-    console.log("product deleted");
 
     return res.status(200).json({
       success: true,
-      data: null,
+      data: id,
       message: "Product deleted successfully",
     });
   } catch (error) {

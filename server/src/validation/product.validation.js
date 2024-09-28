@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export const ProductValidation = Joi.object({
+  id: Joi.number().integer().optional(),
   title: Joi.string().min(3).required().label("Title").messages({
     "string.base": "Title must be a string",
     "string.empty": "Title is required",
@@ -71,4 +72,5 @@ export const ProductValidation = Joi.object({
       "any.required":
         "Discount percentage is required when the product is on sale",
     }),
+  images: Joi.array().items(Joi.string()).optional(),
 });

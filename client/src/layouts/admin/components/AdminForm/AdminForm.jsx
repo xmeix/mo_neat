@@ -15,11 +15,9 @@ const AdminForm = ({
 }) => {
   const [formData, setFormData] = useState(data);
   const [formErrors, setFormErrors] = useState({});
-  console.log(formData);
+
   const handleChange = (e) => {
-    console.log("handling change...");
     const { name, value, type, files } = e.target;
-    console.log(name, value, type, files);
 
     setFormData((prevState) => ({
       ...prevState,

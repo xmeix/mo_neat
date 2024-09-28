@@ -1,7 +1,8 @@
 @import "./../../../index.scss";
 
 .toast-error,
-.toast-success {
+.toast-success,
+.toast-info {
   position: fixed;
   bottom: 15%;
   left: 50%;
@@ -25,6 +26,9 @@
 
 .toast-success {
   background-color: $success-color;
+}
+.toast-info {
+  background-color: $info-color;
 }
 
 @keyframes slideIn {

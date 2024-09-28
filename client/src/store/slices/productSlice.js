@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addProduct, deleteProduct, getAllProducts } from "../apiCalls/product";
+import {
+  addProduct,
+  deleteProduct,
+  getAllProducts,
+  updateProduct,
+} from "../apiCalls/product";
 
 const productSlice = createSlice({
   name: "product",
@@ -48,6 +53,8 @@ const productSlice = createSlice({
     builder.addCase(addProduct.fulfilled, (state, action) => {
       state.loading = false;
       state.success = action.payload.message;
+      const newProduct = action.payload.data;
+      state.products.push(newProduct);
     });
     builder.addCase(addProduct.rejected, (state, action) => {
       state.loading = false;
@@ -60,9 +67,40 @@ const productSlice = createSlice({
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
       state.loading = false;
-      state.success = action.payload.message; 
+      state.success = action.payload.message;
+      const deletedProductId = action.payload.data;
+
+      const productExists = state.products.some(
+        (product) => product.id == deletedProductId
+      );
+
+      if (productExists) {
+        state.products = state.products.filter(
+          (product) => product.id != deletedProductId
+        );
+      } else {
+        console.log("Product with the given ID was not found in the state.");
+      }
     });
     builder.addCase(deleteProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    });
+    builder.addCase(updateProduct.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.success = null;
+    });
+    builder.addCase(updateProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = action.payload.message;
+      const updatedProduct = action.payload.data;
+      state.products = state.products.filter(
+        (e, i) => e.id !== updatedProduct.id
+      );
+      state.products.push(updatedProduct);
+    });
+    builder.addCase(updateProduct.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.message;
     });

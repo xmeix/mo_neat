@@ -4,6 +4,7 @@ import "./Toast.scss";
 const useToast = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
 
   useEffect(() => {
     const errorTimer = setTimeout(() => {
@@ -13,12 +14,16 @@ const useToast = () => {
     const successTimer = setTimeout(() => {
       setSuccessMessage("");
     }, 3000);
+    const infoTimer = setTimeout(() => {
+      setInfoMessage("");
+    }, 3000);
 
     return () => {
       clearTimeout(errorTimer);
       clearTimeout(successTimer);
+      clearTimeout(infoTimer);
     };
-  }, [errorMessage, successMessage]);
+  }, [errorMessage, successMessage, infoMessage]);
 
   const showErrorToast = (error) => {
     setErrorMessage(error);
@@ -26,6 +31,9 @@ const useToast = () => {
 
   const showSuccessToast = (success) => {
     setSuccessMessage(success);
+  };
+  const showInfoToast = (success) => {
+    setInfoMessage(success);
   };
 
   const Toast = () => {
@@ -40,11 +48,16 @@ const useToast = () => {
           <div className="toast-success">
             {successMessage ? successMessage : "Success!"}
           </div>
+        )}{" "}
+        {infoMessage && (
+          <div className="toast-info">
+            {infoMessage ? infoMessage : "Info!"}
+          </div>
         )}
       </>
     );
   };
-  return { Toast, showErrorToast, showSuccessToast };
+  return { Toast, showErrorToast, showSuccessToast, showInfoToast };
 };
 
 export default useToast;

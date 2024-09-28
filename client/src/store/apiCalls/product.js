@@ -42,12 +42,10 @@ export const deleteProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "products/update",
-  async (body, { rejectWithValue }) => {
+  async ({ body, id }, { rejectWithValue }) => {
     try {
-      const response = await apiService.admin.patch(
-        `products/${body.productId}`,
-        body.body
-      );
+      console.log(body);
+      const response = await apiService.admin.patch(`products/${id}`, body);
       return response;
     } catch (error) {
       return rejectWithValue(error.message);

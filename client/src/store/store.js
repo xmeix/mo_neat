@@ -45,22 +45,8 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllProducts());
   },
 });
-
-listenerMiddleware.startListening({
-  actionCreator: deleteProduct.fulfilled,
-  effect: async (action, listenerApi) => {
-    console.log("listen to delete products... dispatch products.");
-    listenerApi.dispatch(getAllProducts());
-  },
-});
-
-listenerMiddleware.startListening({
-  actionCreator: addProduct.fulfilled,
-  effect: async (action, listenerApi) => {
-    console.log("listen to add products... dispatch products.");
-    listenerApi.dispatch(getAllProducts());
-  },
-});
+ 
+ 
 
 export const store = configureStore({
   reducer: persistedReducer,
