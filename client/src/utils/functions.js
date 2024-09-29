@@ -167,3 +167,29 @@ export const parseError = (error) => {
 };
 export const isISODate = (str) =>
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(str);
+
+export const isValidWilaya = (data) => {
+  const errors = {};
+
+  if (isEmpty([data.name]) || data.name.trim() === "") {
+    errors.name = "Wilaya name is required.";
+  }
+
+  // Validate communes
+  if (!Array.isArray(data.communes) || isEmpty(data.communes)) {
+    errors.communes = "At least one commune is required.";
+  } else {
+    const areValidCommunes = data.communes.every(
+      (commune) => typeof commune === "string" && commune.trim() !== ""
+    );
+    if (!areValidCommunes) {
+      errors.communes = "All communes must be valid non-empty strings.";
+    }
+  }
+
+  if (isEmpty([data.homeDeliveryFee]) || data.homeDeliveryFee <= 0) {
+    errors.homeDeliveryFee = "Home delivery fee must be a non-negative number.";
+  }
+
+  return Object.keys(errors).length === 0 ? null : errors;
+};

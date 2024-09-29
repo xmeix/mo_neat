@@ -188,3 +188,29 @@ export const couponFormInputs = [
     value: "",
   },
 ];
+export const wilayaFormInputs = [
+  {
+    label: "Name",
+    name: "name",
+    placeholder: "Enter the Wilaya name",
+    type: "text",
+    value: "",
+  },
+  {
+    label: "Centers",
+    name: "communes",
+    placeholder: "Select the Centers",
+    type: "select",
+    options: [],
+    isMulti: true,
+    value: "",
+    creatable: true,
+  },
+  {
+    label: "Home Delivery Fee",
+    name: "homeDeliveryFee",
+    placeholder: "Enter the home delivery fee",
+    type: "number",
+    value: "",
+  },
+];

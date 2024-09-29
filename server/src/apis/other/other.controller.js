@@ -3,13 +3,19 @@ import ValidationError from "../../utils/errors/ValidationError.js";
 
 export const createWilaya = async (req, res, next) => {
   try {
-    const { name, communes, homeDeliveryFee } = req.body;
+    const { name, communes, homeDeliveryFee, stopDesks = [] } = req.body;
+
+    console.log(req.body);
 
     const wilaya = await prisma.wilaya.create({
       data: {
         name,
         communes,
         homeDeliveryFee,
+        stopDesks,
+      },
+      include: {
+        stopDesks: true,
       },
     });
 
