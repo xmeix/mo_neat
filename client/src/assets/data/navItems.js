@@ -55,6 +55,11 @@ export const navItems = [
         path: "/admin/geographical/wilayas",
       },
       {
+        title: "View Communes",
+        icon: PublicRoundedIcon,
+        path: "/admin/geographical/communes",
+      },
+      {
         title: "View Stop Desks",
         icon: LocalShippingRoundedIcon,
         path: "/admin/geographical/stopDesks",

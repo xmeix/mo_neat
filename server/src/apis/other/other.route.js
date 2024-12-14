@@ -2,11 +2,13 @@ import express from "express";
 import { verifyCookieTokenAndAdmin } from "../../middlewares/auth.middleware.js";
 import {
   addCommunesToWilaya,
+  createCommune,
   createStopDesk,
   createWilaya,
   deleteCommuneFromWilaya,
   deleteStopDesk,
   deleteWilaya,
+  getAllCommunes,
   getAllStopDesksByWilaya,
   getAllWilayas,
   updateStopDesk,
@@ -16,8 +18,13 @@ import {
 const router = express.Router();
 
 router.post("/", verifyCookieTokenAndAdmin, createWilaya);
-
 router.get("/", verifyCookieTokenAndAdmin, getAllWilayas);
+
+
+router.get("/communes", verifyCookieTokenAndAdmin, getAllCommunes);
+router.post("/communes", verifyCookieTokenAndAdmin, createCommune);
+
+
 
 router.put("/:id", verifyCookieTokenAndAdmin, updateWilaya);
 

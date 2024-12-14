@@ -5,13 +5,13 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
-    "dev": "nodemon --watch index.js"
+    "start": "node index.js",
+    "dev": "nodemon --watch .",
+    "lint": "eslint . --ext .js,.jsx"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.2",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

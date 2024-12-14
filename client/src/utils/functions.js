@@ -1,3 +1,5 @@
+import { algerianProvinces } from "../assets/data/formsData";
+
 export const isValidHex = (hex) => {
   const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
   return hexRegex.test(hex);
@@ -173,6 +175,8 @@ export const isValidWilaya = (data) => {
 
   if (isEmpty([data.name]) || data.name.trim() === "") {
     errors.name = "Wilaya name is required.";
+  } else if (!provinceExistsInMap(data.name)) {
+    errors.name = "Please set a valid wilaya.";
   }
 
   // Validate communes
@@ -192,4 +196,23 @@ export const isValidWilaya = (data) => {
   }
 
   return Object.keys(errors).length === 0 ? null : errors;
+};
+
+export const isValidCenter = (data) => {
+  const errors = {};
+
+  if (isEmpty([data.name]) || data.name.trim() === "") {
+    errors.name = "Center name is required.";
+  }
+  if (isEmpty([data.wilaya]) || data.wilaya.trim() === "") {
+    errors.name = "Wilaya name is required.";
+  } else if (!provinceExistsInMap(data.wilaya)) {
+    errors.wilaya = "Please set a valid wilaya.";
+  }
+
+  return Object.keys(errors).length === 0 ? null : errors;
+};
+
+export const provinceExistsInMap = (province) => {
+  return algerianProvinces.some((p) => p.province === province);
 };

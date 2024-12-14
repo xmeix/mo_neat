@@ -12,6 +12,7 @@ import AdminProducts from "./layouts/admin/pages/products/AdminProducts";
 import AdminCoupons from "./layouts/admin/pages/coupons/AdminCoupons";
 import AdminWilayas from "./layouts/admin/pages/geo/wilaya/AdminWilayas";
 import AdminStopDesks from "./layouts/admin/pages/geo/stopDesks/AdminStopDesks";
+import AdminCommunes from "./layouts/admin/pages/geo/communes/AdminCommunes";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +61,10 @@ const router = createBrowserRouter([
       {
         path: "geographical/stopDesks",
         element: <AdminStopDesks />,
-      },
+      },{
+        path: "geographical/communes",
+        element: <AdminCommunes />,
+      }, 
     ],
   },
 ]);

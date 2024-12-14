@@ -5,26 +5,65 @@ export const createWilaya = async (req, res, next) => {
   try {
     const { name, communes, homeDeliveryFee, stopDesks = [] } = req.body;
 
-    console.log(req.body);
+    const existingCommunes = await prisma.commune.findMany({
+      where: {
+        name: {
+          in: communes,
+        },
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    const existingCommuneNames = existingCommunes.map(
+      (commune) => commune.name
+    );
+
+    const communesToCreate = communes.filter(
+      (commune) => !existingCommuneNames.includes(commune)
+    );
 
     const wilaya = await prisma.wilaya.create({
       data: {
         name,
-        communes,
-        homeDeliveryFee,
-        stopDesks,
+        homeDeliveryFee: parseInt(homeDeliveryFee),
+        communes: {
+          create: communesToCreate.map((commune) => ({
+            name: commune,
+          })),
+        },
+        stopDesks: {
+          create: stopDesks.map((desk) => ({
+            name: desk.name,
+            address: desk.address,
+            StopDeskDeliveryFees: parseInt(desk.StopDeskDeliveryFees),
+          })),
+        },
       },
       include: {
         stopDesks: true,
+        communes: true,
       },
     });
 
+    const result = {
+      id: wilaya.id,
+      name: wilaya.name,
+      homeDeliveryFee: parseInt(wilaya.homeDeliveryFee),
+      stopDesks: wilaya.stopDesks,
+      communes: wilaya.communes,
+      createdAt: wilaya.createdAt,
+      updatedAt: wilaya.updatedAt,
+    };
+
     res.status(201).json({
       success: true,
-      data: wilaya,
+      data: result,
       message: "Wilaya created successfully",
     });
   } catch (error) {
+    console.error("Error creating wilaya:", error);
     next(error);
   }
 };
@@ -33,45 +72,32 @@ export const getAllWilayas = async (req, res, next) => {
   try {
     const wilayas = await prisma.wilaya.findMany({
       include: {
-        StopDesk: true,
+        stopDesks: true,
+        communes: true,
       },
     });
 
+    const result = wilayas.map((wilaya) => ({
+      id: wilaya.id,
+      name: wilaya.name,
+      homeDeliveryFee: parseInt(wilaya.homeDeliveryFee),
+      createdAt: wilaya.createdAt,
+      updatedAt: wilaya.updatedAt,
+      stopDesks: wilaya.stopDesks,
+      communes: wilaya.communes.map((commune) => commune.name),
+      createdAt: wilaya.createdAt,
+      updatedAt: wilaya.updatedAt,
+    }));
+
     res.status(200).json({
       success: true,
-      data: wilayas,
-      message: "wilayas retrieved successfully",
+      data: result,
+      message: "Wilayas retrieved successfully",
     });
   } catch (error) {
     next(error);
   }
 };
-
-export const getWilayaById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const wilaya = await prisma.wilaya.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        StopDesk: true,
-      },
-    });
-
-    if (!wilaya) {
-      throw new ValidationError("Wilaya not found");
-    }
-
-    res.status(200).json({
-      success: true,
-      data: wilaya,
-      message: "wilaya retrieved successfully",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const updateWilaya = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -100,13 +126,128 @@ export const deleteWilaya = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.wilaya.delete({
+    const deletedWilaya = await prisma.wilaya.delete({
       where: { id: parseInt(id) },
+      include: {
+        communes: true,
+        stopDesks: true,
+      },
     });
 
     res.status(200).json({
       success: true,
-      message: "Wilaya deleted successfully",
+      data: deletedWilaya,
+      message: "Wilaya and related data deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting wilaya:", error);
+    next(error);
+  }
+};
+
+export const getAllCommunes = async (req, res, next) => {
+  try {
+    const communes = await prisma.commune.findMany({
+      include: {
+        wilaya: true,
+      },
+    });
+
+    const result = communes.map((commune) => ({
+      id: commune.id,
+      name: commune.name,
+      wilaya: commune.wilaya.name,
+      createdAt: commune.createdAt,
+      updatedAt: commune.updatedAt,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: result,
+      message: "Communes retrieved successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const createCommune = async (req, res, next) => {
+  try {
+    const { name, wilaya: wilayaName, homeDeliveryFee } = req.body;
+
+    let wilaya = await prisma.wilaya.findUnique({
+      where: { name: wilayaName },
+    });
+
+    if (!wilaya) {
+      wilaya = await prisma.wilaya.create({
+        data: {
+          name: wilayaName,
+          homeDeliveryFee: parseInt(homeDeliveryFee) || 0,
+          communes: {
+            create: {
+              name,
+            },
+          },
+        },
+        include: {
+          communes: true,
+        },
+      });
+    } else {
+      await prisma.commune.create({
+        data: {
+          name,
+          wilaya: {
+            connect: { id: wilaya.id },
+          },
+        },
+      });
+    }
+
+    const communes = await prisma.commune.findMany({
+      where: { wilayaId: wilaya.id },
+      include: {
+        wilaya: true,
+      },
+    });
+
+    const result = communes.map((commune) => ({
+      id: commune.id,
+      name: commune.name,
+      wilaya: commune.wilaya.name,
+      createdAt: commune.createdAt,
+      updatedAt: commune.updatedAt,
+    }));
+
+    res.status(201).json({
+      success: true,
+      data: result,
+      message: "Commune created successfully and attached to the wilaya.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWilayaById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const wilaya = await prisma.wilaya.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        StopDesk: true,
+      },
+    });
+
+    if (!wilaya) {
+      throw new ValidationError("Wilaya not found");
+    }
+
+    res.status(200).json({
+      success: true,
+      data: wilaya,
+      message: "wilaya retrieved successfully",
     });
   } catch (error) {
     next(error);

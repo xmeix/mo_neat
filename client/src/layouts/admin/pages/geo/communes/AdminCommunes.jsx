@@ -1,71 +1,55 @@
 import { useEffect, useState } from "react";
-import "./AdminWilayas.scss";
+
 import { useDispatch, useSelector } from "react-redux";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import {
-  addWilaya,
-  deleteWilaya,
-  updateWilaya,
-} from "../../../../../store/apiCalls/wilaya";
 import useDrawer from "../../../../../utils/hooks/drawer/useDrawer";
 import useToast from "../../../../../utils/hooks/toast/useToast";
-import { isSameProduct, isValidWilaya } from "../../../../../utils/functions";
+import { isSameProduct, isValidCenter } from "../../../../../utils/functions";
 import Table from "../../../../../components/table/Table";
 import AdminForm from "../../../components/AdminForm/AdminForm";
-import { wilayaFormInputs } from "../../../../../assets/data/formsData";
+import { centerFormInputs } from "../../../../../assets/data/formsData";
 import { useNavigate } from "react-router-dom";
+import {
+  addCommune,
+  deleteCommune,
+  updateCommune,
+} from "../../../../../store/apiCalls/commune";
 
 const initData = {
   name: "",
-  centers: [],
-  homeDeliveryFee: 0,
+  wilaya: "",
 };
 
 const columns = [
+  { header: "Wilaya", accessor: "wilaya" },
   { header: "Name", accessor: "name" },
-  { header: "Centers", accessor: "communes" },
-  { header: "Home delivery Fee", accessor: "homeDeliveryFee" },
   { header: "Created At", accessor: "createdAt" },
   { header: "Updated At", accessor: "updatedAt" },
 ];
 
-const AdminWilayas = () => {
+const AdminCommunes = () => {
   const { Drawer, setShowDrawer } = useDrawer();
   const { Toast, showErrorToast, showSuccessToast, showInfoToast } = useToast();
   const [formData, setFormData] = useState(initData);
   const [drawerType, setDrawerType] = useState(null);
   const dispatch = useDispatch();
-  const { wilayas, loading, error, success } = useSelector(
+  const { communes, loading, error, success } = useSelector(
     (state) => state.geo
   );
-  const navigate = useNavigate();
 
   const actions = [
     {
-      label: "Edit Wilaya",
+      label: "Edit Center",
       icon: EditIcon,
       iconColor: "#FFC400",
       onClick: (row) => onEdit(row),
     },
-
-    {
-      label: "View Centers",
-      icon: DeleteIcon,
-      iconColor: "#FF5252",
-      onClick: (row) => navigate("/wilayas/communes"),
-    },
-    {
-      label: "View Stop desks",
-      icon: DeleteIcon,
-      iconColor: "#FF5252",
-      onClick: (row) => navigate("/wilayas/stopdesks"),
-    },
     {
       special: true,
-      label: "Delete Wilaya",
+      label: "Delete Center",
       icon: DeleteIcon,
       iconColor: "#FF5252",
       onClick: (row) => handleDelete(row.id),
@@ -80,10 +64,10 @@ const AdminWilayas = () => {
 
   const handleDelete = async (id) => {
     try {
-      await dispatch(deleteWilaya(id));
-      showSuccessToast("Wilaya deleted successfully");
+      await dispatch(deleteCommune(id));
+      showSuccessToast("Center deleted successfully");
     } catch (ero) {
-      console.log("Error deleting wilaya:", ero);
+      console.log("Error deleting Center:", ero);
       showErrorToast(error || ero);
     }
   };
@@ -91,12 +75,12 @@ const AdminWilayas = () => {
   const handleCreate = async (data, e) => {
     e.preventDefault();
     try {
-      await dispatch(addWilaya(data)).unwrap();
-      showSuccessToast("Wilaya created successfully");
+      await dispatch(addCommune(data)).unwrap();
+      showSuccessToast("Center created successfully");
       setShowDrawer(false);
     } catch (ero) {
       setFormData(data);
-      console.log("Error creating wilaya:", ero);
+      console.log("Error creating Center:", ero);
       showErrorToast(error || ero);
     }
   };
@@ -110,30 +94,30 @@ const AdminWilayas = () => {
   const handleEdit = async (data, e) => {
     e.preventDefault();
     if (isSameProduct(data, formData)) {
-      showInfoToast("No changes have been made to the wilaya, yet!");
+      showInfoToast("No changes have been made to the center, yet!");
       return;
     } else {
       try {
-        await dispatch(updateWilaya({ body: data, id: data.id })).unwrap();
-        showSuccessToast("Wilaya created successfully");
+        await dispatch(updateCommune({ body: data, id: data.id })).unwrap();
+        showSuccessToast("Center created successfully");
         setShowDrawer(false);
       } catch (ero) {
         setFormData(data);
-        console.log("Error creating wilaya:", ero);
+        console.log("Error creating center:", ero);
         showErrorToast(error || ero);
       }
     }
   };
 
   return (
-    <div className="admin-wilayas">
+    <div className="admin-centers">
       <Table
         columns={columns}
-        data={wilayas}
+        data={communes}
         actions={actions}
         rowsPerPage={5}
-        title="Wilayas Management"
-        unit="wilaya(s)"
+        title="Centers Management"
+        unit="center(s)"
         cardHeaders={["name"]}
         banned={[["id"], ["id", "createdAt", "updatedAt"]]}
         footer={["createdAt", "updatedAt"]}
@@ -141,12 +125,12 @@ const AdminWilayas = () => {
         onCreate={onCreate}
       />
       {drawerType && (
-        <Drawer title={drawerType === "add" ? "Add Wilaya" : "Edit Wilaya"}>
+        <Drawer title={drawerType === "add" ? "Add Center" : "Edit Center"}>
           <AdminForm
             data={formData}
-            formInputs={wilayaFormInputs}
+            formInputs={centerFormInputs}
             handleCreate={drawerType === "add" ? handleCreate : handleEdit}
-            validationMethod={isValidWilaya}
+            validationMethod={isValidCenter}
             btnTitle={drawerType === "add" ? "Add" : "Save"}
           />
         </Drawer>
@@ -156,4 +140,4 @@ const AdminWilayas = () => {
   );
 };
 
-export default AdminWilayas;
+export default AdminCommunes;

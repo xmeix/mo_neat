@@ -58,7 +58,7 @@ model StopDesk {
   address String?
   wilayaId Int
   StopDeskDeliveryFees Int
-  wilaya Wilaya @relation(fields: [wilayaId], references: [id])
+  wilaya           Wilaya @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
 
   Order Order[]
 }
@@ -67,7 +67,7 @@ model Wilaya {
   id               Int              @id @default(autoincrement())
 
   name String
-  communes String[]
+   communes         Commune[] 
   homeDeliveryFee Int
 
   stopDesks StopDesk[]
@@ -75,7 +75,15 @@ model Wilaya {
   updatedAt  DateTime  @updatedAt
 
 }
+model Commune {
+  id        Int     @id @default(autoincrement())
+  name      String
+  wilayaId  Int
+  wilaya    Wilaya  @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model Status {
   id               Int              @id @default(autoincrement())

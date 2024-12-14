@@ -6,7 +6,7 @@ import {
 import authReducer from "./slices/authSlice.js";
 import productReducer from "./slices/productSlice.js";
 import couponReducer from "./slices/couponSlice.js";
-import wilayaReducer from "./slices/wilayaSlice.js";
+import geoReducer from "./slices/geoSlice.js";
 import {
   persistStore,
   persistReducer,
@@ -22,6 +22,7 @@ import { getAllProducts } from "./apiCalls/product.js";
 import { login } from "./apiCalls/auth.js";
 import { getAllCoupons } from "./apiCalls/coupon.js";
 import { getAllWilayas } from "./apiCalls/wilaya.js";
+import { getAllCommunes } from "./apiCalls/commune.js";
 
 const persistConfig = {
   key: "root",
@@ -33,7 +34,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
   coupon: couponReducer,
-  wilaya: wilayaReducer,
+  geo: geoReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -49,6 +50,8 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllCoupons());
     console.log("listen ... dispatch wilayas.");
     listenerApi.dispatch(getAllWilayas());
+    console.log("listen ... dispatch centers.");
+    listenerApi.dispatch(getAllCommunes());
   },
 });
 
