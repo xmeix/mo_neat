@@ -4,6 +4,7 @@ import Select from "../../../../components/select/Select";
 import Input from "../../../../components/input/Input";
 import Button from "../../../../components/button/Button";
 import ImagesInput from "../../../../components/imagesInput/ImagesInput";
+import TextArea from "../../../../components/textArea/TextArea";
 
 const AdminForm = ({
   formInputs,
@@ -83,6 +84,19 @@ const AdminForm = ({
             onChange={handleChange}
             error={error}
             imagesValue={formData[input.name]}
+          />
+        );
+      } else if (input.type === "textarea") {
+        return (
+          <TextArea
+            key={index}
+            label={input.label}
+            name={input.name}
+            placeholder={input.placeholder}
+            type={input.type}
+            value={getValue()}
+            onChange={handleChange}
+            error={error}
           />
         );
       } else {

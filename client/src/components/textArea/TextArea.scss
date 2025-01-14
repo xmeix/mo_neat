@@ -1,0 +1,17 @@
+@import "./../../index.scss";
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+
+  textarea {
+    min-width: 100%;
+    max-width: 300px;
+    max-height: 150px;
+    min-height: 40px;
+
+    @include media(xs) {
+      background-color: red;
+    }
+  }
+}

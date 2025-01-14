@@ -45,7 +45,8 @@ const AdminProducts = () => {
   const dispatch = useDispatch();
   const { products, loading, error, success, formData, drawerType } =
     useSelector((state) => state.product);
-  const toggleActions = [
+  
+    const toggleActions = [
     {
       special: true,
       label: "Enable Product",
@@ -61,26 +62,6 @@ const AdminProducts = () => {
       onClick: (row) => handleActivation(row),
     },
   ];
-
-  const handleActivation = async (row) => {
-    try {
-      await dispatch(
-        updateProduct({
-          body: { enabled: row.enabled ? false : true },
-          id: row.id,
-        })
-      ).unwrap();
-      showSuccessToast("Product updated successfully");
-    } catch (ero) {
-      console.log("Error updating product:", ero);
-      showErrorToast(error || ero);
-    }
-  };
-  const onCreate = () => {
-    dispatch(resetFormData());
-    setShowDrawer(true);
-    dispatch(setDrawerType("add"));
-  };
   const actions = [
     {
       label: "View Product",
@@ -109,6 +90,28 @@ const AdminProducts = () => {
       onClick: (row) => handleDelete(row.id),
     },
   ];
+
+
+  const handleActivation = async (row) => {
+    try {
+      await dispatch(
+        updateProduct({
+          body: { enabled: row.enabled ? false : true },
+          id: row.id,
+        })
+      ).unwrap();
+      showSuccessToast("Product updated successfully");
+    } catch (ero) {
+      console.log("Error updating product:", ero);
+      showErrorToast(error || ero);
+    }
+  };
+  const onCreate = () => {
+    dispatch(resetFormData());
+    setShowDrawer(true);
+    dispatch(setDrawerType("add"));
+  };
+
   const handleDelete = async (id) => {
     console.log("Delete Product", id);
     try {
@@ -218,10 +221,13 @@ const AdminProducts = () => {
     }
   };
 
-  const transformedProducts = products.map((product) => ({
-    ...product,
-    categories: product.categories.map((category) => category.title), // Show only titles
-  }));
+  const transformedProducts = products
+    .map((product) => ({
+      ...product,
+      categories: product.categories.map((category) => category.title), // Show only titles
+    }))
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
   return (
     <div className="admin-products">
       <Table
