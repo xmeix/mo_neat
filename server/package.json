@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .js,.jsx"
   },
   "dependencies": {
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "^6.0.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
-    "prisma": "^5.18.0"
+    "prisma": "^6.0.1"
   }
 }

@@ -106,8 +106,6 @@ export const addProduct = async (req, res, next) => {
 
 export const editProduct = async (req, res, next) => {
   try {
-    console.log("here to change");
-
     const { id } = req.params;
     const {
       title,
@@ -120,13 +118,14 @@ export const editProduct = async (req, res, next) => {
       sizes,
       colors,
       images: oldImages = [],
+      enabled,
     } = req.body;
 
     //here we have to get the products actual images
     //if the oldImages doesnt include one of them than we delete them
     const existingProduct = await prisma.product.findUnique({
       where: { id: parseInt(id) },
-      select: { images: true },
+      select: { images: true, categories: true },
     });
 
     if (!existingProduct) {
@@ -145,40 +144,38 @@ export const editProduct = async (req, res, next) => {
       .filter((image) => oldImages?.includes(image))
       .concat(newImages);
 
-    const categoriesData = await categoriesIdsWCreation(categories);
-
-    console.log("categoriesData");
-    console.log(categoriesData);
-
+    const categoriesData = categories
+      ? await categoriesIdsWCreation(categories)
+      : [];
+    const updateData = {
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(price_before_sale && {
+        price_before_sale: parseInt(price_before_sale),
+      }),
+      ...(onSale !== undefined && { onSale: parseBoolean(onSale) }),
+      ...(enabled !== undefined && { enabled }),
+      ...(stock && { stock: parseInt(stock) }),
+      ...(discountPercentage && {
+        discountPercentage: parseInt(discountPercentage),
+      }),
+      ...(categoriesData.length > 0 && {
+        categories: { connect: categoriesData },
+      }),
+      ...(sizes && { sizes }),
+      ...(colors && { colors }),
+      ...(updatedImages.length > 0 && { images: updatedImages }),
+    };
+    console.log(updateData);
     const product = await prisma.product.update({
       where: { id: parseInt(id) },
-      data: {
-        title,
-        description,
-        stock: parseInt(stock),
-        onSale: parseBoolean(onSale),
-        price_before_sale: parseInt(price_before_sale),
-        discountPercentage: parseBoolean(onSale)
-          ? parseInt(discountPercentage)
-          : 0,
-        images: updatedImages,
-        categories: {
-          connect: categoriesData,
-        },
-        sizes,
-        colors,
-      },
+      data: updateData,
       include: { categories: true },
     });
-
-    console.log("product");
-    console.log(product);
 
     actualImagesToRemove.forEach((image) => {
       deleteImageFromStorage(image);
     });
-
-    console.log("dfsldgs");
 
     return res.status(200).json({
       success: true,

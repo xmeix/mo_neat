@@ -108,7 +108,8 @@ model Product {
   onSale Boolean @default(false)
   price_before_sale Int
   discountPercentage Int @default(0)
- 
+  enabled Boolean @default(true)
+
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   orderProducts OrderProduct[]
