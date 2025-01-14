@@ -14,6 +14,7 @@
 
   .card-content {
     display: flex;
+    align-items: center;
     flex: 1;
 
     .card-image-container {
@@ -30,6 +31,7 @@
     .card-header {
       flex: 2;
       margin: 0 1.5em;
+
       .card-header-primary {
         font-size: 18px;
         font-weight: 600;
@@ -38,11 +40,29 @@
 
       .card-header-secondary {
         font-size: 13px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
       }
     }
 
     .card-main {
       flex: 1;
+
+      .price-div {
+        font-size: 15px;
+        font-weight: 500;
+        background-color: $hover-link-background-color;
+        width: fit-content;
+        padding: 0.5em;
+        border-radius: 30px;
+        .currency {
+          font-size: 13px;
+        }
+      }
     }
 
     .card-special {

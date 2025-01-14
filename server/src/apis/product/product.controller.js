@@ -117,12 +117,10 @@ export const editProduct = async (req, res, next) => {
       categories,
       sizes,
       colors,
-      images: oldImages = [],
+      images: oldImages = [], // Images to retain
       enabled,
     } = req.body;
 
-    //here we have to get the products actual images
-    //if the oldImages doesnt include one of them than we delete them
     const existingProduct = await prisma.product.findUnique({
       where: { id: parseInt(id) },
       select: { images: true, categories: true },
@@ -132,21 +130,38 @@ export const editProduct = async (req, res, next) => {
       throw new ValidationError("Product not found");
     }
 
-    const actualImagesToRemove = existingProduct.images.filter(
-      (e) => !oldImages.includes(e)
-    );
+    console.log("Existing Images:", existingProduct.images);
+    console.log("Old Images (to retain):", oldImages);
 
+    // Check if the product images need to be removed
+    const actualImagesToRemove =
+      oldImages.length > 0
+        ? existingProduct.images.filter((image) => !oldImages.includes(image))
+        : [];
+
+    console.log("Images to Remove:", actualImagesToRemove);
+
+    // Get the new images (uploaded files)
     const newImages = req.files
       ? req.files.map((file) => "images/" + file.filename)
       : [];
 
-    const updatedImages = existingProduct.images
-      .filter((image) => oldImages?.includes(image))
-      .concat(newImages);
+    console.log("New Images:", newImages);
+
+    // Combine existing retained images with new uploaded images
+    const updatedImages = [
+      ...(oldImages.length > 0
+        ? existingProduct.images.filter((image) => oldImages.includes(image))
+        : existingProduct.images),
+      ...newImages,
+    ];
+
+    console.log("Updated Images:", updatedImages);
 
     const categoriesData = categories
       ? await categoriesIdsWCreation(categories)
       : [];
+
     const updateData = {
       ...(title && { title }),
       ...(description && { description }),
@@ -164,15 +179,16 @@ export const editProduct = async (req, res, next) => {
       }),
       ...(sizes && { sizes }),
       ...(colors && { colors }),
-      ...(updatedImages.length > 0 && { images: updatedImages }),
+      images: updatedImages, // Ensure this is always included
     };
-    console.log(updateData);
+
     const product = await prisma.product.update({
       where: { id: parseInt(id) },
       data: updateData,
       include: { categories: true },
     });
 
+    // Delete old images that are no longer part of the product
     actualImagesToRemove.forEach((image) => {
       deleteImageFromStorage(image);
     });

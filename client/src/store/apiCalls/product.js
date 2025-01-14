@@ -44,10 +44,12 @@ export const updateProduct = createAsyncThunk(
   "products/update",
   async ({ body, id }, { rejectWithValue }) => {
     try {
+      console.log("body --------------");
       console.log(body);
       const response = await apiService.admin.patch(`products/${id}`, body);
       return response;
     } catch (error) {
+      console.log("first", error);
       return rejectWithValue(error.message);
     }
   }

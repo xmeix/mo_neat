@@ -50,7 +50,13 @@ const TableCard = ({ row, actions, content, columns }) => {
                 index === 0 ? "card-header-primary" : "card-header-secondary"
               }
             >
-              {String(row[header])}
+              {header.includes("price") ? (
+                <div className="price-div">
+                  {row[header]} <span className="currency">DA</span>{" "}
+                </div>
+              ) : (
+                String(row[header])
+              )}
             </div>
           ))}
         </div>
@@ -62,7 +68,11 @@ const TableCard = ({ row, actions, content, columns }) => {
                 row[header] === false ? "" : "card-special-primary false-bg"
               }
             >
-              {row[header] === false ? "" : getLabel(header)}
+              {row[header] === false
+                ? ""
+                : getLabel(header).concat(
+                    header === "onSale" ? ` ${row["discountPercentage"]}%` : ""
+                  )}
             </div>
           ))}
         </div>

@@ -45,8 +45,8 @@ const AdminProducts = () => {
   const dispatch = useDispatch();
   const { products, loading, error, success, formData, drawerType } =
     useSelector((state) => state.product);
-  
-    const toggleActions = [
+
+  const toggleActions = [
     {
       special: true,
       label: "Enable Product",
@@ -90,7 +90,6 @@ const AdminProducts = () => {
       onClick: (row) => handleDelete(row.id),
     },
   ];
-
 
   const handleActivation = async (row) => {
     try {
@@ -226,7 +225,7 @@ const AdminProducts = () => {
       ...product,
       categories: product.categories.map((category) => category.title), // Show only titles
     }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <div className="admin-products">
@@ -239,7 +238,7 @@ const AdminProducts = () => {
         unit="products"
         cardHeaders={{
           headers: ["title", "description"],
-          content: [],
+          content: ["price_before_sale"],
           special: ["onSale"],
           footer: ["createdAt", "updatedAt"],
         }}
