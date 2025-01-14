@@ -9,7 +9,7 @@ const AdminForm = ({
   formInputs,
   data,
   title,
-  handleCreate,
+  handleAction,
   validationMethod,
   btnTitle = "Create",
 }) => {
@@ -37,7 +37,7 @@ const AdminForm = ({
     console.log("formDataAfterValidation");
     console.log(formData);
     setFormErrors({});
-    handleCreate(formData, e);
+    handleAction(formData, e);
   };
 
   const renderInput = useCallback(

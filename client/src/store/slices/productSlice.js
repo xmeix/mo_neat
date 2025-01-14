@@ -5,11 +5,24 @@ import {
   getAllProducts,
   updateProduct,
 } from "../apiCalls/product";
-
+const initData = {
+  title: "",
+  description: "",
+  images: [],
+  stock: 1,
+  categories: [],
+  sizes: [],
+  colors: [],
+  onSale: "false",
+  price_before_sale: 0,
+  discountPercentage: 0,
+};
 const productSlice = createSlice({
   name: "product",
   initialState: {
     products: [],
+    drawerType: null,
+    formData: initData,
     loading: false,
     error: null,
     success: null,
@@ -20,6 +33,8 @@ const productSlice = createSlice({
       state.error = null;
       state.loading = false;
       state.success = null;
+      state.formData = initData;
+      state.drawerType = null;
     },
     setError: (state, action) => {
       state.error = action.payload.message || action.payload;
@@ -28,6 +43,19 @@ const productSlice = createSlice({
     resetError: (state) => {
       state.error = null;
       state.success = null;
+    },
+    setFormData(state, action) {
+      state.formData = action.payload;
+    },
+    setDrawerType(state, action) {
+      state.drawerType = action.payload;
+    },
+    resetState(state) {
+      state.formData = initData;
+      state.drawerType = null;
+    },
+    resetFormData(state) {
+      state.formData = initData;
     },
   },
   extraReducers: (builder) => {
@@ -43,7 +71,7 @@ const productSlice = createSlice({
     builder.addCase(getAllProducts.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
-     });
+    });
 
     builder.addCase(addProduct.pending, (state) => {
       state.loading = true;
@@ -106,5 +134,12 @@ const productSlice = createSlice({
   },
 });
 
-export const { reset, resetError, setError } = productSlice.actions;
+export const {
+  reset,
+  resetError,
+  setError,
+  setDrawerType,
+  resetFormData,
+  setFormData,
+} = productSlice.actions;
 export default productSlice.reducer;

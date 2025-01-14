@@ -8,27 +8,20 @@ import useDrawer from "../../../../utils/hooks/drawer/useDrawer";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 import useToast from "../../../../utils/hooks/toast/useToast";
+
 import { isSameProduct, isValidProduct } from "../../../../utils/functions";
 import {
   addProduct,
   deleteProduct,
   updateProduct,
 } from "../../../../store/apiCalls/product";
-import { resetError, setError } from "../../../../store/slices/productSlice";
-
-const initData = {
-  title: "",
-  description: "",
-  images: [],
-  stock: 1,
-  categories: [],
-  sizes: [],
-  colors: [],
-  onSale: "false",
-  price_before_sale: 0,
-  discountPercentage: 0,
-};
+import {
+  resetFormData,
+  setDrawerType,
+  setFormData,
+} from "../../../../store/slices/productSlice";
 
 const columns = [
   { header: "Title", accessor: "title" },
@@ -48,13 +41,46 @@ const columns = [
 const AdminProducts = () => {
   const { Drawer, setShowDrawer } = useDrawer();
   const { Toast, showErrorToast, showSuccessToast, showInfoToast } = useToast();
-  const [formData, setFormData] = useState(initData);
-  const [drawerType, setDrawerType] = useState(null);
-  const dispatch = useDispatch();
-  const { products, loading, error, success } = useSelector(
-    (state) => state.product
-  );
 
+  const dispatch = useDispatch();
+  const { products, loading, error, success, formData, drawerType } =
+    useSelector((state) => state.product);
+  const toggleActions = [
+    {
+      special: true,
+      label: "Enable Product",
+      iconColor: "#00BFA6",
+      iconSize: "30px",
+      onClick: (row) => handleActivation(row),
+    },
+    {
+      special: true,
+      label: "Disable Product",
+      iconColor: "#99999",
+      iconSize: "30px",
+      onClick: (row) => handleActivation(row),
+    },
+  ];
+
+  const handleActivation = async (row) => {
+    try {
+      await dispatch(
+        updateProduct({
+          body: { enabled: row.enabled ? false : true },
+          id: row.id,
+        })
+      ).unwrap();
+      showSuccessToast("Product updated successfully");
+    } catch (ero) {
+      console.log("Error updating product:", ero);
+      showErrorToast(error || ero);
+    }
+  };
+  const onCreate = () => {
+    dispatch(resetFormData());
+    setShowDrawer(true);
+    dispatch(setDrawerType("add"));
+  };
   const actions = [
     {
       label: "View Product",
@@ -63,28 +89,26 @@ const AdminProducts = () => {
       onClick: (row) => {
         console.log("View Product", row);
       },
+
+      iconSize: "20px",
     },
     {
       label: "Edit Product",
       icon: EditIcon,
       iconColor: "#FFC400",
       onClick: (row) => onEdit(row),
+      iconSize: "20px",
     },
     {
       special: true,
       label: "Delete Product",
       icon: DeleteIcon,
       iconColor: "#FF5252",
+      iconSize: "20px",
+
       onClick: (row) => handleDelete(row.id),
     },
   ];
-
-  const onCreate = () => {
-    setFormData(initData);
-    setShowDrawer(true);
-    setDrawerType("add");
-  };
-
   const handleDelete = async (id) => {
     console.log("Delete Product", id);
     try {
@@ -131,16 +155,17 @@ const AdminProducts = () => {
       showSuccessToast("Product created successfully");
       setShowDrawer(false);
     } catch (ero) {
-      setFormData(data);
+      dispatch(setFormData(data));
+
       console.log("Error creating product:", ero);
       showErrorToast(error || ero);
     }
   };
 
   const onEdit = (row) => {
-    setDrawerType("edit");
+    dispatch(setDrawerType("edit"));
     setShowDrawer(true);
-    setFormData(row);
+    dispatch(setFormData(row));
   };
 
   const handleEdit = async (data, e) => {
@@ -186,12 +211,13 @@ const AdminProducts = () => {
         showSuccessToast("Product updated successfully");
         setShowDrawer(false);
       } catch (ero) {
-        setFormData(data);
+        dispatch(setFormData(data));
         console.log("Error updating product:", ero);
         showErrorToast(error || ero);
       }
     }
   };
+
   const transformedProducts = products.map((product) => ({
     ...product,
     categories: product.categories.map((category) => category.title), // Show only titles
@@ -201,13 +227,18 @@ const AdminProducts = () => {
       <Table
         columns={columns}
         data={transformedProducts}
-        actions={actions}
+        actions={{ normal: actions, toggle: toggleActions }}
         rowsPerPage={5}
         title="Product Management"
         unit="products"
-        cardHeaders={["title", "description"]}
+        cardHeaders={{
+          headers: ["title", "description"],
+          content: [],
+          special: ["onSale"],
+          footer: ["createdAt", "updatedAt"],
+        }}
         banned={[
-          ["id", "images"],
+          [],
           [
             "description",
             "images",
@@ -218,8 +249,6 @@ const AdminProducts = () => {
             "categories",
           ],
         ]}
-        footer={["createdAt", "updatedAt"]}
-        special={["sizes", "categories", "colors"]}
         onCreate={onCreate}
       />
       {drawerType && (
@@ -227,7 +256,7 @@ const AdminProducts = () => {
           <AdminForm
             data={formData}
             formInputs={productFormInputs}
-            handleCreate={drawerType === "add" ? handleCreate : handleEdit}
+            handleAction={drawerType === "add" ? handleCreate : handleEdit}
             validationMethod={isValidProduct}
             btnTitle={drawerType === "add" ? "Add" : "Save"}
           />

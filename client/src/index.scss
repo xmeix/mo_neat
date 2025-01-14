@@ -36,6 +36,14 @@ $regular-bg-col: rgba(0, 128, 0, 0.219);
 $exists: rgb(114, 175, 44);
 $notexist: rgb(235, 63, 63);
 
+.false-bg {
+  background-color: $notexist;
+  color: $toast-text-color;
+}
+.true-bg {
+  background-color: $exists;
+}
+
 .exists {
   color: $exists;
 }

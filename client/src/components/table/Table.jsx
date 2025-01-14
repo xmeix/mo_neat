@@ -16,9 +16,7 @@ const Table = ({
   unit,
   cardHeaders,
   banned,
-  footer,
   onCreate,
-  special = [],
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -64,11 +62,13 @@ const Table = ({
                   key={row.id}
                   row={row}
                   actions={actions}
-                  headers={cardHeaders}
-                  banned={banned[0]}
-                  footer={footer}
+                  content={{
+                    headers: cardHeaders.headers,
+                    main: cardHeaders.content,
+                    special: cardHeaders.special,
+                    footer: cardHeaders.footer,
+                  }}
                   columns={neededColumns(0)}
-                  special={special}
                 />
               ))}
             </div>

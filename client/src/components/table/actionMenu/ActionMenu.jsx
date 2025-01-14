@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import "./ActionMenu.scss";
-import { MoreVert } from "@mui/icons-material";
+import {
+  MoreVert,
+  ToggleOffRounded,
+  ToggleOnRounded,
+} from "@mui/icons-material";
 
 const ActionMenu = ({
   setShowActions,
@@ -34,7 +38,7 @@ const ActionMenu = ({
 
           {showActions && (
             <div className="action-dropdown">
-              {actions.map((action, index) => (
+              {actions.normal.map((action, index) => (
                 <button
                   key={index}
                   className="action-btn"
@@ -46,13 +50,34 @@ const ActionMenu = ({
                   {action.label}
                 </button>
               ))}
+              {row["enabled"] ? (
+                <button
+                  className="action-btn"
+                  onClick={() => {
+                    actions.toggle[0].onClick(row);
+                    setShowActions(false);
+                  }}
+                >
+                  {actions.toggle[0].label}
+                </button>
+              ) : (
+                <button
+                  className="action-btn"
+                  onClick={() => {
+                    actions.toggle[1].onClick(row);
+                    setShowActions(false);
+                  }}
+                >
+                  {actions.toggle[1].label}
+                </button>
+              )}
             </div>
           )}
         </>
       )}
       {type === "buttons" && (
         <div className="action-btns-header">
-          {actions.map((action, index) => (
+          {actions.normal.map((action, index) => (
             <button
               key={index}
               className="action-btn"
@@ -62,11 +87,44 @@ const ActionMenu = ({
               }}
             >
               <action.icon
-                className="action-btn-icon"
-                style={{ color: action.iconColor }}
+                style={{
+                  color: action.iconColor,
+                  fontSize: action.iconSize,
+                }}
               />
             </button>
           ))}
+          {row["enabled"] ? (
+            <button
+              className="action-btn"
+              onClick={() => {
+                actions.toggle[0].onClick(row);
+                setShowActions(false);
+              }}
+            >
+              <ToggleOnRounded
+                style={{
+                  color: actions.toggle[0].iconColor,
+                  fontSize: actions.toggle[0].iconSize,
+                }}
+              />
+            </button>
+          ) : (
+            <button
+              className="action-btn"
+              onClick={() => {
+                actions.toggle[1].onClick(row);
+                setShowActions(false);
+              }}
+            >
+              <ToggleOffRounded
+                style={{
+                  color: actions.toggle[1].iconColor,
+                  fontSize: actions.toggle[1].iconSize,
+                }}
+              />
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -2,37 +2,13 @@ import "./TableCard.scss";
 import { useState } from "react";
 import ActionMenu from "../actionMenu/ActionMenu";
 import { MEDIA_BASE_URL } from "../../../store/apiCalls/apiService";
-import { formatDate, isISODate } from "../../../utils/functions";
+import { formatDate } from "../../../utils/functions";
 
-const TableCard = ({
-  row,
-  actions,
-  headers,
-  banned,
-  footer,
-  columns,
-  special = [],
-}) => {
+const TableCard = ({ row, actions, content, columns }) => {
   const [showActions, setShowActions] = useState(false);
 
   const getLabel = (key) => {
     return columns.find((col) => col.accessor === key)?.header;
-  };
-
-  const formatValue = (key, value) => {
-    if (key === "colors") {
-      return value.map((color) => (
-        <span
-          key={color}
-          className="color-swatch"
-          style={{ backgroundColor: color }}
-          title={color}
-        ></span>
-      ));
-    } else if (key === "sizes" || key === "categories") {
-      return value.join(", ");
-    }
-    return value === true ? "YES" : value === false ? "NO" : value;
   };
 
   return (
@@ -45,18 +21,17 @@ const TableCard = ({
         row={row}
         type="buttons"
       />
-      <div className="card-headers-container">
-        {row["images"] && (
-          <div className="card-important">
-            <img
-              src={MEDIA_BASE_URL + row["images"][0]}
-              alt=""
-              className="card-image"
-            />
-          </div>
-        )}
-        <div className="card-headers">
-          {headers.map((header, index) => (
+
+      <div className="card-content">
+        <div className="card-image-container">
+          <img
+            src={MEDIA_BASE_URL + row["images"][0]}
+            alt=""
+            className="card-image"
+          />
+        </div>
+        <div className="card-header">
+          {content.headers.map((header, index) => (
             <div
               key={index}
               className={
@@ -67,51 +42,37 @@ const TableCard = ({
             </div>
           ))}
         </div>
-        <div className="card-content">
-          {Object.entries(row).map(([key, value], index) =>
-            !headers.includes(key) &&
-            !banned.includes(key) &&
-            !footer.includes(key) &&
-            special.includes(key) &&
-            value !== null ? (
-              <div className="card-field" key={index}>
-                <span className="field-label">{getLabel(key)}:</span>
-                <span className="field-value">
-                  {value instanceof Date ||
-                  (typeof value === "string" && isISODate(value))
-                    ? formatDate(value)
-                    : formatValue(key, value)}
-                </span>
-              </div>
-            ) : null
-          )}
-        </div>
-      </div>
-      <div className="card-content card-content-hz">
-        {Object.entries(row).map(([key, value], index) =>
-          !headers.includes(key) &&
-          !banned.includes(key) &&
-          !footer.includes(key) &&
-          !special.includes(key) &&
-          value !== null ? (
-            <div className="card-field" key={index}>
-              <span className="field-label">{getLabel(key)}:</span>
-              <span className="field-value">
-                {value instanceof Date ||
-                (typeof value === "string" && isISODate(value))
-                  ? formatDate(value)
-                  : formatValue(key, value)}
-              </span>
+        <div className="card-main">
+          {content.main.map((header, index) => (
+            <div
+              key={index}
+              className={
+                index === 0 ? "card-header-primary" : "card-header-secondary"
+              }
+            >
+              {String(row[header])}
             </div>
-          ) : null
-        )}
+          ))}
+        </div>
+        <div className="card-special">
+          {content.special.map((header, index) => (
+            <div
+              key={index}
+              className={
+                row[header] === false ? "" : "card-special-primary false-bg"
+              }
+            >
+              {row[header] === false ? "" : getLabel(header)}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="card-footer">
         {Object.entries(row).map(([key, value], index) =>
-          footer.includes(key) ? (
-            <div className="card-field" key={index}>
-              <span className="field-label">{getLabel(key)}:</span>
-              <span className="field-value">
+          content.footer.includes(key) ? (
+            <div className="card-footer-field" key={index}>
+              <span className="card-footer-field-label">{getLabel(key)}:</span>
+              <span className="card-footer-field-value">
                 {value instanceof Date || !isNaN(Date.parse(value))
                   ? formatDate(value)
                   : String(value)}

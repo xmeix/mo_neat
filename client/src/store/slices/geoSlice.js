@@ -62,7 +62,8 @@ const geoSlice = createSlice({
       state.loading = false;
       state.success = action.payload.message;
       const newWilaya = action.payload.data;
-      state.wilayas.push(newWilaya.map((commune) => commune.name));
+      console.log(newWilaya);
+      state.wilayas.push(newWilaya);
 
       state.communes = newWilaya.communes;
     });
