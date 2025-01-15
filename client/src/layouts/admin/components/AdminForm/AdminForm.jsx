@@ -35,8 +35,6 @@ const AdminForm = ({
       return;
     }
 
-    console.log("formDataAfterValidation");
-    console.log(formData);
     setFormErrors({});
     handleAction(formData, e);
   };
@@ -62,12 +60,23 @@ const AdminForm = ({
       };
 
       if (input.type === "select") {
+        const selectedValues = Array.isArray(formData[input.name])
+          ? formData[input.name]
+          : [];
+        const allOptions = [
+          ...input.options,
+          ...selectedValues
+            .filter(
+              (value) => !input.options.find((option) => option.value === value)
+            )
+            .map((value) => ({ value, label: value })),
+        ];
         return (
           <Select
             key={index}
             label={input.label}
             name={input.name}
-            options={input.options}
+            options={allOptions}
             value={getValue()}
             onChange={handleChange}
             isMulti={input.isMulti}

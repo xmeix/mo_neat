@@ -1,7 +1,10 @@
 import { algerianProvinces } from "../assets/data/formsData";
 
 export const isValidHex = (hex) => {
-  const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
+  console.log("hex");
+  console.log(hex);
+  const hexRegex = /^#([0-9A-Fa-f]{3}){1,2}$/i;
+  console.log(hexRegex.test(hex.trim()));
   return hexRegex.test(hex);
 };
 export const isValidProduct = (data) => {
