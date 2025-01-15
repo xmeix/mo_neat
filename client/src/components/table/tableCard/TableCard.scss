@@ -3,22 +3,33 @@
 @import "./../Table.scss";
 
 .table-card {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
   padding: 0.5em 1.5em;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
   background-color: $input-background-color;
   border-radius: 5px;
-
+  @include media(xxs) {
+    padding: 0.5em;
+  }
+  @include media(xs) {
+    padding: 0.3em 1em;
+  }
   .tc-actions {
   }
 
   .card-content {
     display: flex;
     align-items: center;
+    gap: 1em;
+    overflow: hidden;
     flex: 1;
 
     .card-image-container {
       width: 80px;
+      min-width: 60px;
+
       height: 80px;
       overflow: hidden;
       border-radius: 5px;
@@ -28,14 +39,91 @@
         object-fit: cover;
       }
     }
+    .card-content-container {
+      flex: 1;
+      display: flex;
+
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1em;
+      @include media(xxs) {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0.5em;
+      }
+      @include media(xs) {
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 0.5em;
+      }
+      .card-main {
+        .price-div {
+          font-size: 13px;
+          font-weight: 500;
+          background-color: $hover-link-background-color;
+          width: fit-content;
+          padding: 0.3em;
+          border-radius: 30px;
+          text-align: center;
+          white-space: nowrap;
+          @include media(xxs) {
+            font-size: 10px;
+            padding: 0.8em 0.3em;
+            min-width: 60px;
+          }
+          @include media(xs) {
+            font-size: 10px;
+            padding: 0.8em 0.3em;
+            min-width: 60px;
+          }
+          .currency {
+            font-size: 13px;
+            @include media(xxs) {
+              padding: 0.8em 0.3em;
+              font-size: 9px;
+            }
+            @include media(xs) {
+              padding: 0.8em 0.3em;
+              font-size: 9px;
+            }
+          }
+        }
+      }
+
+      .card-special {
+        text-align: center;
+        .card-special-primary {
+          padding: 0.8em;
+          border-radius: 30px;
+          font-size: 12px;
+          @include media(xxs) {
+            font-size: 9px;
+            min-width: 60px;
+          }
+          @include media(xs) {
+            font-size: 9px;
+            min-width: 60px;
+            padding: 0.8em 0.3em;
+          }
+        }
+      }
+    }
     .card-header {
-      flex: 2;
-      margin: 0 1.5em;
+      flex: 1;
+      align-self: flex-start;
 
       .card-header-primary {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
-        white-space: nowrap;
+
+        @include media(xxs) {
+          font-size: 13px;
+        }
+        @include media(xs) {
+          font-size: 13px;
+        }
       }
 
       .card-header-secondary {
@@ -45,33 +133,12 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: normal;
-      }
-    }
-
-    .card-main {
-      flex: 1;
-
-      .price-div {
-        font-size: 15px;
-        font-weight: 500;
-        background-color: $hover-link-background-color;
-        width: fit-content;
-        padding: 0.5em;
-        border-radius: 30px;
-        .currency {
-          font-size: 13px;
+        @include media(xxs) {
+          font-size: 10px;
         }
-      }
-    }
-
-    .card-special {
-      align-self: center;
-      text-align: center;
-      .card-special-primary {
-        padding: 0.8em;
-        border-radius: 30px;
-        font-size: 13px;
+        @include media(xs) {
+          font-size: 10px;
+        }
       }
     }
   }
@@ -81,6 +148,15 @@
     justify-content: flex-end;
     gap: 1em;
     text-transform: lowercase;
+    @include media(xxs) {
+      justify-content: space-between;
+      font-size: 9px;
+    }
+    @include media(xs) {
+      justify-content: space-between;
+
+      font-size: 9px;
+    }
     .card-footer-field {
       font-size: 10px;
       display: flex;

@@ -42,39 +42,43 @@ const TableCard = ({ row, actions, content, columns }) => {
             </div>
           ))}
         </div>
-        <div className="card-main">
-          {content.main.map((header, index) => (
-            <div
-              key={index}
-              className={
-                index === 0 ? "card-header-primary" : "card-header-secondary"
-              }
-            >
-              {header.includes("price") ? (
-                <div className="price-div">
-                  {row[header]} <span className="currency">DA</span>{" "}
-                </div>
-              ) : (
-                String(row[header])
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="card-special">
-          {content.special.map((header, index) => (
-            <div
-              key={index}
-              className={
-                row[header] === false ? "" : "card-special-primary false-bg"
-              }
-            >
-              {row[header] === false
-                ? ""
-                : getLabel(header).concat(
-                    header === "onSale" ? ` ${row["discountPercentage"]}%` : ""
-                  )}
-            </div>
-          ))}
+        <div className="card-content-container">
+          <div className="card-main">
+            {content.main.map((header, index) => (
+              <div
+                key={index}
+                className={
+                  index === 0 ? "card-header-primary" : "card-header-secondary"
+                }
+              >
+                {header.includes("price") ? (
+                  <div className="price-div">
+                    {row[header]} <span className="currency">DA</span>{" "}
+                  </div>
+                ) : (
+                  String(row[header])
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="card-special">
+            {content.special.map((header, index) => (
+              <div
+                key={index}
+                className={
+                  row[header] === false ? "" : "card-special-primary false-bg"
+                }
+              >
+                {row[header] === false
+                  ? ""
+                  : getLabel(header).concat(
+                      header === "onSale"
+                        ? ` ${row["discountPercentage"]}%`
+                        : ""
+                    )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <div className="card-footer">

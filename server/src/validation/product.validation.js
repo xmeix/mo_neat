@@ -33,7 +33,10 @@ export const ProductValidation = Joi.object({
   colors: Joi.array()
     .items(
       Joi.string()
-        .pattern(/^#([0-9A-Fa-f]{6})$/, "hex color")
+        .pattern(
+          /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/i,
+          "extended hex color"
+        )
         .required()
     )
     .optional()

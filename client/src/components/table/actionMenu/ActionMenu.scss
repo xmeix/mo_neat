@@ -49,7 +49,12 @@
 
         padding: 0.5em;
       }
-  
+      @include media(xxs) {
+        font-size: 5px;
+      }
+      @include media(xs) {
+        font-size: 5px;
+      }
     }
   }
 }

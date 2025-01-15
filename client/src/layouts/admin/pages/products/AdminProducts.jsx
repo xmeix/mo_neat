@@ -34,8 +34,8 @@ const columns = [
   { header: "Sizes", accessor: "sizes" },
   { header: "Colors", accessor: "colors" },
   { header: "Categories", accessor: "categories" },
-  { header: "Created At", accessor: "createdAt" },
-  { header: "Updated At", accessor: "updatedAt" },
+  { header: "Created", accessor: "createdAt" },
+  { header: "Updated", accessor: "updatedAt" },
 ];
 
 const AdminProducts = () => {
@@ -49,14 +49,14 @@ const AdminProducts = () => {
   const toggleActions = [
     {
       special: true,
-      label: "Enable Product",
+      label: "Disable Product",
       iconColor: "#00BFA6",
       iconSize: "30px",
       onClick: (row) => handleActivation(row),
     },
     {
       special: true,
-      label: "Disable Product",
+      label: "Activate Product",
       iconColor: "#99999",
       iconSize: "30px",
       onClick: (row) => handleActivation(row),
