@@ -1,6 +1,214 @@
 import prisma from "../../db/prismaClient.js";
 import ValidationError from "../../utils/errors/ValidationError.js";
 
+export const createBatchHomeDelivery = async (req, res, next) => {
+  try {
+    const body = req.body;
+
+    // Extract unique Wilaya names
+    const wilayaNames = [...new Set(body.map((item) => item.wilaya))];
+
+    // Fetch existing Wilayas and Communes
+    const existingWilayas = await prisma.wilaya.findMany({
+      where: { name: { in: wilayaNames } },
+      include: { communes: true },
+    });
+
+    // Map for quick lookup
+    const wilayaMap = new Map();
+    for (const wilaya of existingWilayas) {
+      wilayaMap.set(wilaya.name, wilaya);
+    }
+
+    const newWilayas = [];
+    const newCommunes = [];
+    const updateCommunes = [];
+
+    for (const { wilaya, commune, deliveryFee } of body) {
+      const existingWilaya = wilayaMap.get(wilaya);
+
+      if (!existingWilaya) {
+        // Queue Wilaya for creation
+        newWilayas.push({ name: wilaya });
+      } else {
+        const existingCommune = existingWilaya.communes.find(
+          (c) => c.name === commune
+        );
+
+        if (!existingCommune) {
+          // Queue Commune for creation
+          newCommunes.push({
+            name: commune,
+            wilayaId: existingWilaya.id,
+            homeDeliveryFee: deliveryFee,
+          });
+        } else if (existingCommune.homeDeliveryFee !== deliveryFee) {
+          // Queue Commune for update
+          updateCommunes.push({
+            id: existingCommune.id,
+            homeDeliveryFee: deliveryFee,
+          });
+        }
+      }
+    }
+
+    // Create new Wilayas
+    if (newWilayas.length > 0) {
+      await prisma.wilaya.createMany({
+        data: newWilayas,
+        skipDuplicates: true,
+      });
+    }
+
+    // Refresh Wilaya map after insertion
+    const updatedWilayas = await prisma.wilaya.findMany({
+      where: { name: { in: wilayaNames } },
+    });
+    for (const wilaya of updatedWilayas) {
+      wilayaMap.set(wilaya.name, wilaya);
+    }
+
+    // Assign Wilaya IDs to new Communes
+    for (const { wilaya, commune, deliveryFee } of body) {
+      if (!wilayaMap.get(wilaya)) continue;
+      const wilayaId = wilayaMap.get(wilaya).id;
+      newCommunes.push({
+        name: commune,
+        wilayaId,
+        homeDeliveryFee: deliveryFee,
+      });
+    }
+
+    // Batch create new Communes
+    if (newCommunes.length > 0) {
+      await prisma.commune.createMany({
+        data: newCommunes,
+        skipDuplicates: true,
+      });
+    }
+
+    // Batch update Communes
+    if (updateCommunes.length > 0) {
+      const updateOperations = updateCommunes.map(({ id, homeDeliveryFee }) =>
+        prisma.commune.update({
+          where: { id },
+          data: { homeDeliveryFee },
+        })
+      );
+      await prisma.$transaction(updateOperations);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Batch home delivery entries created/updated successfully.",
+    });
+  } catch (error) {
+    console.error("Error processing batch home delivery:", error);
+    next(error);
+  }
+};
+
+export const createBatchStopDesks = async (req, res, next) => {
+  try {
+    const body = req.body;
+
+    // Get all unique Wilaya names from the input
+    const wilayaNames = [...new Set(body.map((item) => item.wilaya))];
+
+    // Fetch existing Wilayas and their StopDesks
+    const existingWilayas = await prisma.wilaya.findMany({
+      where: { name: { in: wilayaNames } },
+      include: { stopDesks: true },
+    });
+
+    // Create a lookup map for quick access
+    const wilayaMap = new Map();
+    for (const wilaya of existingWilayas) {
+      wilayaMap.set(wilaya.name, wilaya);
+    }
+
+    const newWilayas = [];
+    const newStopDesks = [];
+    const updateStopDesks = [];
+
+    for (const { wilaya, stopDesk, address, deliveryFee } of body) {
+      const existingWilaya = wilayaMap.get(wilaya);
+
+      if (!existingWilaya) {
+        // If Wilaya doesn't exist, create it with the first StopDesk
+        newWilayas.push({
+          name: wilaya,
+          stopDesks: {
+            create: [
+              { name: stopDesk, address, StopDeskDeliveryFees: deliveryFee },
+            ],
+          },
+        });
+      } else {
+        // Wilaya exists; check for the StopDesk
+        const existingStopDesk = existingWilaya.stopDesks.find(
+          (s) => s.name === stopDesk
+        );
+
+        if (!existingStopDesk) {
+          // If the StopDesk doesn't exist, queue it for creation
+          newStopDesks.push({
+            name: stopDesk,
+            address,
+            wilayaId: existingWilaya.id,
+            StopDeskDeliveryFees: deliveryFee,
+          });
+        } else if (
+          existingStopDesk.StopDeskDeliveryFees !== deliveryFee ||
+          existingStopDesk.address !== address
+        ) {
+          // If the deliveryFee or address differs, queue it for update
+          updateStopDesks.push({
+            id: existingStopDesk.id,
+            data: { address, StopDeskDeliveryFees: deliveryFee },
+          });
+        }
+      }
+    }
+
+    // Batch create new Wilayas
+    if (newWilayas.length > 0) {
+      await prisma.wilaya.createMany({
+        data: newWilayas,
+        skipDuplicates: true,
+      });
+    }
+
+    // Batch create new StopDesks
+    if (newStopDesks.length > 0) {
+      await prisma.stopDesk.createMany({
+        data: newStopDesks,
+        skipDuplicates: true,
+      });
+    }
+
+    // Batch update StopDesks
+    if (updateStopDesks.length > 0) {
+      const updateOperations = updateStopDesks.map(({ id, data }) =>
+        prisma.stopDesk.update({
+          where: { id },
+          data,
+        })
+      );
+
+      await prisma.$transaction(updateOperations);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Batch stop desk entries created/updated successfully.",
+    });
+  } catch (error) {
+    console.error("Error processing batch stop desks:", error);
+    next(error);
+  }
+};
+
 export const createWilaya = async (req, res, next) => {
   try {
     const { name, communes, homeDeliveryFee, stopDesks = [] } = req.body;

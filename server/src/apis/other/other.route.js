@@ -2,6 +2,8 @@ import express from "express";
 import { verifyCookieTokenAndAdmin } from "../../middlewares/auth.middleware.js";
 import {
   addCommunesToWilaya,
+  createBatchHomeDelivery,
+  createBatchStopDesks,
   createCommune,
   createStopDesk,
   createWilaya,
@@ -17,14 +19,19 @@ import {
 
 const router = express.Router();
 
+router.post(
+  "/batch/homedelivery",
+  verifyCookieTokenAndAdmin,
+  createBatchHomeDelivery
+);
+
+router.post("/batch/stopDesk", verifyCookieTokenAndAdmin, createBatchStopDesks);
+
 router.post("/", verifyCookieTokenAndAdmin, createWilaya);
 router.get("/", verifyCookieTokenAndAdmin, getAllWilayas);
 
-
 router.get("/communes", verifyCookieTokenAndAdmin, getAllCommunes);
 router.post("/communes", verifyCookieTokenAndAdmin, createCommune);
-
-
 
 router.put("/:id", verifyCookieTokenAndAdmin, updateWilaya);
 

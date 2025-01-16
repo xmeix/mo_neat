@@ -68,7 +68,6 @@ model Wilaya {
 
   name String
    communes         Commune[] 
-  homeDeliveryFee Int
 
   stopDesks StopDesk[]
   createdAt  DateTime  @default(now())
@@ -80,6 +79,7 @@ model Commune {
   name      String
   wilayaId  Int
   wilaya    Wilaya  @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
+  homeDeliveryFee Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
