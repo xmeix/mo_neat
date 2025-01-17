@@ -23,6 +23,7 @@ import { login } from "./apiCalls/auth.js";
 import { getAllCoupons } from "./apiCalls/coupon.js";
 import { getAllWilayas } from "./apiCalls/wilaya.js";
 import { getAllCommunes } from "./apiCalls/commune.js";
+import { addBatchDTC, addBatchDTD } from "./apiCalls/delivery.js";
 
 const persistConfig = {
   key: "root",
@@ -52,6 +53,28 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllWilayas());
     console.log("listen ... dispatch centers.");
     listenerApi.dispatch(getAllCommunes());
+  },
+});
+
+listenerMiddleware.startListening({
+  actionCreator: addBatchDTD.fulfilled,
+  effect: async (action, listenerApi) => {
+    console.log("listen ... dispatch wilayas.");
+    listenerApi.dispatch(getAllWilayas());
+    console.log("listen ... dispatch centers.");
+    listenerApi.dispatch(getAllCommunes());
+  },
+});
+
+listenerMiddleware.startListening({
+  actionCreator: addBatchDTC.fulfilled,
+  effect: async (action, listenerApi) => {
+    console.log("listen ... dispatch wilayas.");
+    listenerApi.dispatch(getAllWilayas());
+    console.log("listen ... dispatch centers.");
+    listenerApi.dispatch(getAllCommunes());
+    console.log("listen ... dispatch stop desks.");
+    listenerApi.dispatch(getAllStopDesks());
   },
 });
 

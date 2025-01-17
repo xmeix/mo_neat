@@ -6,6 +6,7 @@ import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
 import StoreMallDirectoryRoundedIcon from "@mui/icons-material/StoreMallDirectoryRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import ImportExportRoundedIcon from "@mui/icons-material/ImportExportRounded";
 
 export const navItems = [
   {
@@ -45,24 +46,24 @@ export const navItems = [
     ],
   },
   {
-    title: "Geographical Management",
+    title: "Delivery Management",
     path: "",
     icon: LocationOnRoundedIcon,
     children: [
       {
-        title: "View Wilayas",
-        icon: PublicRoundedIcon,
-        path: "/admin/geographical/wilayas",
+        title: "Import/Export",
+        icon: ImportExportRoundedIcon,
+        path: "/admin/geographical/import-export",
       },
       {
-        title: "View Communes",
-        icon: PublicRoundedIcon,
-        path: "/admin/geographical/communes",
-      },
-      {
-        title: "View Stop Desks",
+        title: "Delivery Methods",
         icon: LocalShippingRoundedIcon,
-        path: "/admin/geographical/stopDesks",
+        path: "/admin/geographical/delivery",
+      },
+      {
+        title: "Shipping zones",
+        icon: PublicRoundedIcon,
+        path: "/admin/geographical/shipping-zones",
       },
     ],
   },
@@ -70,5 +71,6 @@ export const navItems = [
     title: "Log Out",
     path: "/logout",
     icon: LogoutRoundedIcon,
+    children: [],
   },
 ];

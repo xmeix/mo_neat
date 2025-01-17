@@ -235,8 +235,8 @@ const AdminProducts = () => {
         actions={{ normal: actions, toggle: toggleActions }}
         rowsPerPage={5}
         title="Product Management"
-        unit="products"
-        cardHeaders={{
+        unit="product(s)"
+        cardSections={{
           headers: ["title", "description"],
           content: ["price_before_sale"],
           special: ["onSale"],

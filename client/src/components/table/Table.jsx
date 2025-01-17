@@ -14,7 +14,7 @@ const Table = ({
   rowsPerPage = 5,
   title,
   unit,
-  cardHeaders,
+  cardSections,
   banned,
   onCreate,
 }) => {
@@ -41,7 +41,7 @@ const Table = ({
           title={title}
           unit={unit}
         />
-        <NoData text="No data available to show" />;
+        <NoData text="No data available to show" />
       </div>
     );
   } else
@@ -63,10 +63,10 @@ const Table = ({
                   row={row}
                   actions={actions}
                   content={{
-                    headers: cardHeaders.headers,
-                    main: cardHeaders.content,
-                    special: cardHeaders.special,
-                    footer: cardHeaders.footer,
+                    headers: cardSections.headers,
+                    main: cardSections.content,
+                    special: cardSections.special,
+                    footer: cardSections.footer,
                   }}
                   columns={neededColumns(0)}
                 />

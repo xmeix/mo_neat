@@ -6,7 +6,8 @@ import authRoutes from "./src/apis/auth/auth.route.js";
 import orderRoutes from "./src/apis/order/order.route.js";
 import productRoutes from "./src/apis/product/product.route.js";
 import couponRoutes from "./src/apis/coupon/coupon.route.js";
-import otherRoutes from "./src/apis/other/other.route.js";
+import batchRoutes from "./src/apis/batch/batch.route.js";
+import shippingZoneRoutes from "./src/apis/shippingZone/shippingZone.route.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 
 export const setupRoutes = (app) => {
@@ -21,7 +22,7 @@ export const setupRoutes = (app) => {
   );
 
   // ____________________________________________________ ________________________
- 
+
   app.use(express.json({ limit: "30mb" }));
   app.use(express.urlencoded({ limit: "30mb", extended: true }));
   app.use(cookieParser());
@@ -31,6 +32,7 @@ export const setupRoutes = (app) => {
   app.use("/api/orders", orderRoutes);
   app.use("/api/coupons", couponRoutes);
   app.use("/api/products", productRoutes);
-  app.use("/api/wilayas", otherRoutes);
+  app.use("/api/batch", batchRoutes);
+  app.use("/api/shippingZone", shippingZoneRoutes);
   app.use(errorHandler);
 };

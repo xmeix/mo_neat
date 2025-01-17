@@ -36,5 +36,5 @@ yarn add --dev prisma@latest │
 
 docker cp ./prisma/schema.prisma moneat_server:/app/prisma/schema.prisma
 npx prisma generate
-npx prisma migrate dev --name v1.3
+npx prisma migrate dev --name v1.7
 

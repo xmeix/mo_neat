@@ -94,37 +94,37 @@ const ActionMenu = ({
               />
             </button>
           ))}
-          {row["enabled"] ? (
+          {row?.enabled && actions.toggle?.[0] ? (
             <button
               className="action-btn"
               onClick={() => {
-                actions.toggle[0].onClick(row);
+                actions.toggle[0]?.onClick?.(row);
                 setShowActions(false);
               }}
             >
               <ToggleOnRounded
                 style={{
-                  color: actions.toggle[0].iconColor,
-                  fontSize: actions.toggle[0].iconSize,
+                  color: actions.toggle[0]?.iconColor || "inherit",
+                  fontSize: actions.toggle[0]?.iconSize || "inherit",
                 }}
               />
             </button>
-          ) : (
+          ) : actions.toggle?.[1] ? (
             <button
               className="action-btn"
               onClick={() => {
-                actions.toggle[1].onClick(row);
+                actions.toggle[1]?.onClick?.(row);
                 setShowActions(false);
               }}
             >
               <ToggleOffRounded
                 style={{
-                  color: actions.toggle[1].iconColor,
-                  fontSize: actions.toggle[1].iconSize,
+                  color: actions.toggle[1]?.iconColor || "inherit",
+                  fontSize: actions.toggle[1]?.iconSize || "inherit",
                 }}
               />
             </button>
-          )}
+          ) : null}
         </div>
       )}
     </div>

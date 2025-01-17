@@ -23,13 +23,15 @@ const TableCard = ({ row, actions, content, columns }) => {
       />
 
       <div className="card-content">
-        <div className="card-image-container">
-          <img
-            src={MEDIA_BASE_URL + row["images"][0]}
-            alt=""
-            className="card-image"
-          />
-        </div>
+        {row["images"] && (
+          <div className="card-image-container">
+            <img
+              src={MEDIA_BASE_URL + row["images"][0]}
+              alt=""
+              className="card-image"
+            />
+          </div>
+        )}
         <div className="card-header">
           {content.headers.map((header, index) => (
             <div
@@ -72,7 +74,7 @@ const TableCard = ({ row, actions, content, columns }) => {
                 {row[header] === false
                   ? ""
                   : getLabel(header).concat(
-                      header === "onSale"
+                      header === "onSale" || header === "discountPercentage"
                         ? ` ${row["discountPercentage"]}%`
                         : ""
                     )}

@@ -21,69 +21,100 @@ model User {
  
 
 model Order {
-  id               Int              @id @default(autoincrement())
-   
-   
-  //price information
-  total_before_reduction Int
-  total_after_reduction Int @default(0)
-  shippingCost Int
-  checkoutPrice Int //(shipping fees + total (either before or after reduction))
+  id                 Int              @id @default(autoincrement())
+
+  // Price information
+  totalBeforeReduction Int
+  totalAfterReduction  Int             @default(0)
+  shippingCost         Int
+  checkoutPrice        Int             // (shipping fees + total (either before or after reduction))
+
+  // Customer information
+  orderedBy            String          // Orderer's name
+  orderedByPhone       String          // Orderer's phone
+  address              String? 
+  postalCode String? 
   
-  //customer information
-  orderedBy String //orderer name
-  orderedByPhone String //orderer phone
-  address  String? 
-  commune String
-  wilaya String
- 
-  //delivery information
-  deliveryType DeliveryType    @default(HOME_DELIVERY)
-  status Status[] // this is related to one order that has a status at a certain time
-  chosenStopDesk StopDesk? @relation(fields: [chosenStopDeskid], references: [id])
-  chosenStopDeskid Int?
-  //other
-  orderProducts  OrderProduct[]
-  OrderCouponid Int
-  OrderCoupon Coupon @relation(fields: [OrderCouponid], references: [id])
+  // Delivery service information
+  deliveryServiceId    Int?
+  deliveryService      DeliveryService? @relation(fields: [deliveryServiceId], references: [id])
+  
+  deliveryAreaId       Int?             // Relation to DeliveryArea (e.g., StopDesk or Commune)
+  deliveryArea         DeliveryArea?    @relation(fields: [deliveryAreaId], references: [id])
 
 
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  // Status tracking
+  status               Status[]        // Related statuses for the order at different times
+
+  // Order details
+  orderProducts        OrderProduct[]
  
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
 }
-model StopDesk {
+
+model DeliveryService {
   id               Int              @id @default(autoincrement())
-  name String @unique
-  address String?
-  wilayaId Int
-  StopDeskDeliveryFees Int
-  wilaya           Wilaya @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
+  tmCode           String           @unique
+  tmName           String           @unique
+  tmDescription    String?
+  isActive         Boolean          @default(true)
 
-  Order Order[]
+  deliveryAreas    DeliveryArea[]   // Linked delivery areas (e.g., StopDesks, Home Deliveries)
+  orders           Order[]          // All orders linked to this delivery service
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
- 
+
+model DeliveryArea {
+  id               Int              @id @default(autoincrement())
+  name             String?            // specific name for StopDesk
+  address          String?          // Specific address for StopDesk or other area types
+  
+  communeId        Int              // Foreign key linking to the Commune
+  commune          Commune          @relation(fields: [communeId], references: [id], onDelete: Cascade)
+
+  areaType         String         // StopDesk, Home, etc.
+  
+  deliveryFee      Int              // Fee for delivery to this area
+  isActive         Boolean          @default(true)
+
+  deliveryServiceId Int?
+  deliveryService   DeliveryService? @relation(fields: [deliveryServiceId], references: [id]) // Links to DeliveryService
+
+  orders           Order[]          // Orders associated with this delivery area
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Commune {
+  id               Int              @id @default(autoincrement())
+  name             String            
+  wilayaId         Int              // Foreign key linking to Wilaya
+  wilaya           Wilaya           @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
+  postalCode       Int              @unique
+
+  deliveryAreas    DeliveryArea[]   // All delivery areas (StopDesks, etc.) in this commune
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
 model Wilaya {
   id               Int              @id @default(autoincrement())
+  name             String           @unique
+  communes         Commune[]        // Communes within this Wilaya
 
-  name String
-   communes         Commune[] 
-
-  stopDesks StopDesk[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
-model Commune {
-  id        Int     @id @default(autoincrement())
-  name      String
-  wilayaId  Int
-  wilaya    Wilaya  @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
-  homeDeliveryFee Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+ 
+
+ 
+
 
 model Status {
   id               Int              @id @default(autoincrement())
@@ -141,12 +172,15 @@ model Coupon {
   discountPercentage  Int
   description         String?
   expiryDate          DateTime
+ 
 
-  orders              Order[]
+  isActive       Boolean   @default(true)
+
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
 
+ 
  
  
  

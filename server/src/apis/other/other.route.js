@@ -11,6 +11,7 @@ import {
   deleteStopDesk,
   deleteWilaya,
   getAllCommunes,
+  getAllStopDesks,
   getAllStopDesksByWilaya,
   getAllWilayas,
   updateStopDesk,
@@ -44,6 +45,7 @@ router.delete(
   deleteCommuneFromWilaya
 );
 
+router.get("/stopdesks", verifyCookieTokenAndAdmin, getAllStopDesks);
 router.post("/:wilayaId/stopdesks", verifyCookieTokenAndAdmin, createStopDesk);
 
 router.get(

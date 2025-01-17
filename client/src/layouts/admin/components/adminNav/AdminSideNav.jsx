@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../../store/apiCalls/auth";
 import { navItems } from "../../../../assets/data/navItems";
- 
 
 const AdminSideNav = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -26,7 +25,7 @@ const AdminSideNav = () => {
   const handleClickOutside = (event) => {
     if (navRef.current && !navRef.current.contains(event.target)) {
       setIsNavExpanded(false);
-    } 
+    }
   };
 
   useEffect(() => {
@@ -60,10 +59,14 @@ const AdminSideNav = () => {
                   {<item.icon className="btn-icon" />}
                   <div className="nav-item-text">{item.title}</div>
                 </div>
-                {expandedIndex === index ? (
-                  <ExpandLessRoundedIcon className="btn-icon" />
-                ) : (
-                  <ExpandMoreRoundedIcon className="btn-icon" />
+                {item.children.length > 0 && (
+                  <>
+                    {expandedIndex === index ? (
+                      <ExpandLessRoundedIcon className="btn-icon" />
+                    ) : (
+                      <ExpandMoreRoundedIcon className="btn-icon" />
+                    )}
+                  </>
                 )}
               </div>
               {expandedIndex === index && (

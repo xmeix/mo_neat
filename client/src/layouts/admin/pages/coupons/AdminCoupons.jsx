@@ -28,11 +28,11 @@ const initData = {
 const columns = [
   { header: "Coupon", accessor: "name" },
   { header: "Code", accessor: "code" },
-  { header: "Discount - %", accessor: "discountPercentage" },
+  { header: "Discount -", accessor: "discountPercentage" },
   { header: "Description", accessor: "description" },
   { header: "Expiry Date", accessor: "expiryDate" },
-  { header: "Created At", accessor: "createdAt" },
-  { header: "Updated At", accessor: "updatedAt" },
+  { header: "Created", accessor: "createdAt" },
+  { header: "Updated", accessor: "updatedAt" },
 ];
 
 const AdminCoupons = () => {
@@ -119,25 +119,28 @@ const AdminCoupons = () => {
       <Table
         columns={columns}
         data={coupons}
-        actions={actions}
+        actions={{ normal: actions, toggle: [] }}
         rowsPerPage={5}
         title="Coupons Management"
         unit="coupon(s)"
-        cardHeaders={["name", "description"]}
+        cardSections={{
+          headers: ["code", "name", "description"],
+          content: [],
+          special: ["discountPercentage"],
+          footer: ["createdAt", "updatedAt", "expiryDate"],
+        }}
         banned={[
           ["id"],
           ["id", "createdAt", "updatedAt", "description", "name"],
         ]}
-        footer={["createdAt", "updatedAt"]}
-        special={["code", "discountPercentage", "expiryDate"]}
         onCreate={onCreate}
       />
       {drawerType && (
-        <Drawer title={drawerType === "add" ? "Add Coupon" : "Edit Product"}>
+        <Drawer title={drawerType === "add" ? "Add Coupon" : "Edit Coupon"}>
           <AdminForm
             data={formData}
             formInputs={couponFormInputs}
-            handleCreate={drawerType === "add" ? handleCreate : handleEdit}
+            handleAction={drawerType === "add" ? handleCreate : handleEdit}
             validationMethod={isValidCoupon}
             btnTitle={drawerType === "add" ? "Add" : "Save"}
           />
