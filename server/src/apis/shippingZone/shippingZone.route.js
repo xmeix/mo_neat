@@ -4,14 +4,15 @@ import {
   createShippingZone,
   deleteShippingZone,
   getAllShippingZones,
-  updateShippingZone,
+  updateDeliveryArea,
 } from "./shippingZone.controller.js";
 
 const router = express.Router();
 
 router.post("/", verifyCookieTokenAndAdmin, createShippingZone);
 router.get("/", verifyCookieTokenAndAdmin, getAllShippingZones);
-router.put("/:id", verifyCookieTokenAndAdmin, updateShippingZone);
-router.delete("/:id", verifyCookieTokenAndAdmin, deleteShippingZone);
+router.patch("/:id", verifyCookieTokenAndAdmin, updateDeliveryArea);
+
+router.delete("/deleteAll", verifyCookieTokenAndAdmin, deleteShippingZone);
 
 export default router;

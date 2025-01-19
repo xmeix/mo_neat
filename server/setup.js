@@ -8,6 +8,7 @@ import productRoutes from "./src/apis/product/product.route.js";
 import couponRoutes from "./src/apis/coupon/coupon.route.js";
 import batchRoutes from "./src/apis/batch/batch.route.js";
 import shippingZoneRoutes from "./src/apis/shippingZone/shippingZone.route.js";
+import deliveryServiceRoutes from "./src/apis/deliveryService/deliveryService.route.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 
 export const setupRoutes = (app) => {
@@ -34,5 +35,6 @@ export const setupRoutes = (app) => {
   app.use("/api/products", productRoutes);
   app.use("/api/batch", batchRoutes);
   app.use("/api/shippingZone", shippingZoneRoutes);
+  app.use("/api/deliveryService", deliveryServiceRoutes);
   app.use(errorHandler);
 };

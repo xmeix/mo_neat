@@ -213,7 +213,7 @@ export const deleteProduct = async (req, res, next) => {
     });
 
     if (!product) {
-      throw new ValidationError("Product not found!");
+      throw new BaseError("Validation Error", 404, true, `Product not found!`);
     }
 
     product.images.forEach((image) => {
