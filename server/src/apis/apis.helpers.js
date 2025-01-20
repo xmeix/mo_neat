@@ -1,5 +1,14 @@
 import prisma from "../db/prismaClient.js";
 
+export function groupBy(array, key) {
+  return array.reduce((groups, item) => {
+    const groupKey = key(item);
+    groups[groupKey] = groups[groupKey] || [];
+    groups[groupKey].push(item);
+    return groups;
+  }, {});
+}
+
 export const ensureWilayasExist = async (wilayaNames) => {
   const existingWilayas = await prisma.wilaya.findMany({
     where: { name: { in: wilayaNames } },
