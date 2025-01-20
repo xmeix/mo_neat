@@ -60,8 +60,8 @@ model Order {
 
 model DeliveryService {
   id               Int              @id @default(autoincrement())
-  tmCode           String           @unique
-  tmName           String           @unique
+  tmCode           String            
+  tmName           String            
   tmDescription    String?
   carrierName      String           @default("")
   isActive         Boolean          @default(true)

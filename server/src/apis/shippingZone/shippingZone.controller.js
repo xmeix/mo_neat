@@ -38,24 +38,6 @@ export const createShippingZone = async (req, res, next) => {
     const { wilayaMap, wilayasCreated, wilayasReactivated } =
       await ensureWilayasExist(wilayaNames);
 
-    // we need to first create the regions if they do not exist
-    /*const regionNames = [...new Set(regions.map((item) => item.commune))];
-
-    const similarRegionsExist = await checkSimilarRegions(
-      regionNames,
-      wilayaNames,
-      existingService.id
-    );
-
-    if (similarRegionsExist.length > 0) {
-      throw new BaseError(
-        "Validation Error",
-        409,
-        true,
-        `Some of the regions names already exists for the same wilayas, and are active`
-      );
-    }
-*/
     const { regionsMap, regionsCreated, regionsReactivated } =
       await ensureRegionsExist(regions, wilayaMap);
 
@@ -88,9 +70,9 @@ export const createShippingZone = async (req, res, next) => {
       } else {
         newDeliveryAreas.push({
           name: shippingZoneName,
-          address: shippingZoneAddress,
-          areaType: areaType || "",
-          isActive: isActive || true,
+          address: shippingZoneAddress ?? "",
+          areaType: areaType ?? "",
+          isActive: isActive ?? true,
           communeId: regionsMap.get(region.postalCode).id,
           deliveryFee: deliveryFee,
           deliveryServiceId: existingService.id,
@@ -108,13 +90,9 @@ export const createShippingZone = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: newDeliveryAreas,
-      message: `Created ${wilayasCreated.length} new wilayas, 
-      ${regionsCreated.length} new regions,
-       ${newDeliveryAreas.length} new shipping zones; 
-       reactivated ${wilayasReactivated} wilayas and ${regionsReactivated} regions`,
+      message: `Created ${wilayasCreated.length} new wilayas,${regionsCreated.length} new regions,${newDeliveryAreas.length} new shipping zones; reactivated ${wilayasReactivated.length} wilayas and ${regionsReactivated.length} regions`,
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -197,22 +175,25 @@ export const updateDeliveryArea = async (req, res, next) => {
         ...(deliveryFee && { deliveryFee: parseInt(deliveryFee) }),
         ...(isActive !== undefined && { isActive }),
       },
+      include: {
+        commune: true,
+        deliveryService: true,
+      },
     });
 
     res.status(200).json({
       success: true,
       data: updatedDeliveryArea,
-      message: "Delivery system updated successfully.",
+      message: "shipping zone updated successfully.",
     });
   } catch (error) {
-    console.error("Error updating delivery system:", error);
     next(error);
   }
 };
 
 export const deleteShippingZone = async (req, res, next) => {
   try {
-    const deliveryAreaIds = req.body; // Array of delivery area IDs to delete
+    const deliveryAreaIds = req.body.ids; // Array of delivery area IDs to delete
 
     const ids = deliveryAreaIds.map((id) => parseInt(id));
     // Find all the delivery services that match the provided IDs
@@ -241,7 +222,7 @@ export const deleteShippingZone = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: deliveryAreaIds,
+      data: deliveryAreas.map((e) => e.id),
       message: "Shipping zones deleted successfully.",
     });
   } catch (error) {

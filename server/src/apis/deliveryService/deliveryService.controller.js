@@ -1,5 +1,6 @@
 import prisma from "../../db/prismaClient.js";
 import BaseError from "../../utils/errors/BaseError.js";
+import ValidationError from "../../utils/errors/ValidationError.js";
 import { DeliveryServiceValidation } from "../../validation/deliveryService.validation.js";
 
 export const createDeliveryService = async (req, res, next) => {
@@ -43,6 +44,7 @@ export const createDeliveryService = async (req, res, next) => {
       message: "Delivery method created successfully",
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -133,7 +135,7 @@ export const updateDeliveryService = async (req, res, next) => {
 
 export const deleteDeliveryService = async (req, res, next) => {
   try {
-    const idArray = req.body; // body is an array of delivery services ids
+    const idArray = req.body.ids; // body is an array of delivery services ids
 
     // Parse the IDs as integers
     const ids = idArray.map((id) => parseInt(id));

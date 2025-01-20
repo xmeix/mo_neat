@@ -1,3 +1,5 @@
+import prisma from "../db/prismaClient.js";
+
 export const ensureWilayasExist = async (wilayaNames) => {
   const existingWilayas = await prisma.wilaya.findMany({
     where: { name: { in: wilayaNames } },
@@ -99,12 +101,14 @@ export const ensureRegionsExist = async (regions, wilayaMap) => {
     regionsReactivated: reactivatedRegions,
   };
 };
+
 /*
-export const checkSimilarRegions = async (
-  regionNames,
-  wilayaNames,
-  existingServiceId
-) => {
+export const checkSimilarRegions = async (regions, existingServiceId) => {
+  //here we need to check first if one of the regions
+  // contains a postal code that already exists in the commune table ==> error region exists
+  // contains commune of the same wilaya in the database but doesn't have the same postalcode in regions with the pcode in db ==> error region exists but with a different postal code
+  // the combo exists but not active in the database ===> should just activate it
+
   return await prisma.commune.findMany({
     where: {
       name: { in: regionNames },
