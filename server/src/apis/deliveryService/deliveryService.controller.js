@@ -88,8 +88,12 @@ export const updateDeliveryService = async (req, res, next) => {
       const conflictingDeliveryService = await prisma.deliveryService.findFirst(
         {
           where: {
-            tmCode: tmCode ?? existingDeliveryService.tmCode,
-            carrierName: carrierName ?? existingDeliveryService.carrierName,
+            tmCode:
+              tmCode.toUpperCase() ??
+              existingDeliveryService.tmCode.toUpperCase(),
+            carrierName:
+              carrierName.toLowerCase() ??
+              existingDeliveryService.carrierName.toLowerCase(),
             NOT: { id: deliveryServiceId },
           },
         }
@@ -107,8 +111,8 @@ export const updateDeliveryService = async (req, res, next) => {
 
     // Prepare the data for updating
     const dataToUpdate = {
-      ...(tmCode && { tmCode }),
-      ...(tmName && { tmName }),
+      ...(tmCode && { tmCode: tmCode.toUpperCase() }),
+      ...(tmName && { tmName: tmName.toLowerCase() }),
       ...(tmDescription && { tmDescription }),
       ...(isActive !== undefined && { isActive }),
       ...(carrierName && { carrierName }),

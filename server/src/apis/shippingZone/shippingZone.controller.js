@@ -59,6 +59,8 @@ export const createShippingZone = async (req, res, next) => {
           },
         },
       });
+      console.log("existingArea");
+      console.log(existingArea);
 
       if (existingArea) {
         throw new BaseError(
@@ -79,20 +81,43 @@ export const createShippingZone = async (req, res, next) => {
         });
       }
     }
-
+    let devAreaCreated = [];
     if (newDeliveryAreas.length > 0) {
-      await prisma.deliveryArea.createMany({
-        data: newDeliveryAreas,
-        skipDuplicates: true,
-      });
+      const [_, deliveryAreasCreated] = await prisma.$transaction([
+        prisma.deliveryArea.createMany({
+          data: newDeliveryAreas,
+          skipDuplicates: true,
+        }),
+        prisma.deliveryArea.findMany({
+          where: {
+            communeId: { in: newDeliveryAreas.map((area) => area.communeId) },
+            deliveryServiceId: existingService.id,
+            name: shippingZoneName,
+          },
+          include: {
+            deliveryService: true,
+            commune: { include: { wilaya: true } },
+          },
+        }),
+      ]);
+
+      devAreaCreated = deliveryAreasCreated;
+      console.log(deliveryAreasCreated);
     }
 
     res.status(201).json({
       success: true,
-      data: newDeliveryAreas,
+      data: {
+        shippingZonesCreated: devAreaCreated,
+        wilayasCreated,
+        wilayasReactivated,
+        regionsCreated,
+        regionsReactivated,
+      },
       message: `Created ${wilayasCreated.length} new wilayas,${regionsCreated.length} new regions,${newDeliveryAreas.length} new shipping zones; reactivated ${wilayasReactivated.length} wilayas and ${regionsReactivated.length} regions`,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -150,17 +175,19 @@ export const updateDeliveryArea = async (req, res, next) => {
     }
 
     // If activating the delivery area, ensure related Commune and Wilaya are active
+    let communeReactivated = {};
+    let wilayaReactivated = {};
     if (isActive) {
       const { commune } = existingArea;
       if (!commune.isActive) {
-        await prisma.commune.update({
+        communeReactivated = await prisma.commune.update({
           where: { id: commune.id },
           data: { isActive: true },
         });
       }
 
       if (!commune.wilaya.isActive) {
-        await prisma.wilaya.update({
+        wilayaReactivated = await prisma.wilaya.update({
           where: { id: commune.wilaya.id },
           data: { isActive: true },
         });
@@ -183,7 +210,11 @@ export const updateDeliveryArea = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: updatedDeliveryArea,
+      data: {
+        updatedDeliveryArea,
+        communeReactivated,
+        wilayaReactivated,
+      },
       message: "shipping zone updated successfully.",
     });
   } catch (error) {

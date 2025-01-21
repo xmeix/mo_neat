@@ -15,32 +15,49 @@ export const ensureWilayasExist = async (wilayaNames) => {
   });
 
   const wilayaMap = new Map();
-  const wilayasCreated = [];
-  const wilayasReactivated = [];
 
   existingWilayas.forEach((wil) => wilayaMap.set(wil.name, wil));
 
+  let wilayasDataToCreate = [];
+  let wilayasWhereToActivate = [];
   for (const wilayaName of wilayaNames) {
     if (!wilayaMap.has(wilayaName)) {
-      // Create the Wilaya if it does not exist
-      const newWilaya = await prisma.wilaya.create({
-        data: {
-          name: wilayaName,
-        },
+      // // Create the Wilaya if it does not exist
+
+      wilayasDataToCreate.push({
+        name: wilayaName,
       });
-      wilayaMap.set(wilayaName, newWilaya);
-      wilayasCreated.push(newWilaya);
     } else if (!wilayaMap.get(wilayaName).isActive) {
       // Reactivate the Wilaya if it exists but is inactive
-      const updatedWilaya = await prisma.wilaya.update({
-        where: { id: wilayaMap.get(wilayaName).id },
-        data: { isActive: true },
-      });
-      wilayaMap.set(wilayaName, updatedWilaya);
-      wilayasReactivated.push(updatedWilaya);
+
+      wilayasWhereToActivate.push(wilayaMap.get(wilayaName).id);
     }
   }
+  let wilayasCreated = [];
+  let wilayasReactivated = [];
+  //createMany and activate many
+  if (wilayasDataToCreate.length > 0) {
+    wilayasCreated = await prisma.wilaya.createManyAndReturn({
+      data: wilayasDataToCreate,
+      skipDuplicates: true,
+    });
+  }
+  console.log(wilayasWhereToActivate);
+  if (wilayasWhereToActivate.length > 0) {
+    await prisma.wilaya.updateMany({
+      where: { id: { in: wilayasWhereToActivate } },
+      data: {
+        isActive: true,
+      },
+    });
+    wilayasReactivated = await prisma.wilaya.findMany({
+      where: { id: { in: wilayasWhereToActivate } },
+    });
+  }
 
+  // Update the map with the newly created and reactivated wilayas
+  wilayasCreated.forEach((wil) => wilayaMap.set(wil.name, wil));
+  wilayasReactivated.forEach((wil) => wilayaMap.set(wil.name, wil));
   return { wilayaMap, wilayasCreated, wilayasReactivated };
 };
 
@@ -56,58 +73,62 @@ export const ensureRegionsExist = async (regions, wilayaMap) => {
     existingRegions.map((region) => [region.postalCode, region])
   );
 
-  const regionsToCreate = [];
-  const regionsToReactivate = [];
+  let regionsDataToCreate = [];
+  let regionsWhereToReactivate = [];
 
   // Separate regions to create or reactivate
   regions.forEach((region) => {
     const existingRegion = regionsMap.get(region.postalCode);
+    const wilayaId = wilayaMap.get(region.wilaya)?.id;
 
     if (!existingRegion) {
-      regionsToCreate.push(region);
+      regionsDataToCreate.push({
+        name: region.commune,
+        wilayaId,
+        postalCode: region.postalCode,
+      });
     } else if (!existingRegion.isActive) {
-      regionsToReactivate.push(existingRegion);
+      regionsWhereToReactivate.push(existingRegion.id);
     }
   });
 
-  // Create new regions
-  const createdRegions = await Promise.all(
-    regionsToCreate.map((region) => {
-      const wilayaId = wilayaMap.get(region.wilaya)?.id;
-      return prisma.commune
-        .create({
-          data: {
-            name: region.commune,
-            wilayaId,
-            postalCode: region.postalCode,
-          },
-        })
-        .then((newRegion) => {
-          regionsMap.set(newRegion.postalCode, newRegion);
-          return newRegion;
-        });
-    })
-  );
+  //createMany and activate many
+  let regionsCreated = [];
+  let regionsReactivated = [];
 
-  // Reactivate inactive regions
-  const reactivatedRegions = await Promise.all(
-    regionsToReactivate.map((region) =>
-      prisma.commune
-        .update({
-          where: { id: region.id },
-          data: { isActive: true },
-        })
-        .then((updatedRegion) => {
-          regionsMap.set(updatedRegion.postalCode, updatedRegion);
-          return updatedRegion;
-        })
-    )
-  );
+  if (regionsDataToCreate.length > 0) {
+    regionsCreated = await prisma.commune.createManyAndReturn({
+      data: regionsDataToCreate,
+      skipDuplicates: true,
+    });
+  }
+  console.log("regionsWhereToReactivate");
+  console.log(regionsWhereToReactivate);
+  if (regionsWhereToReactivate.length > 0) {
+    await prisma.commune.updateMany({
+      where: {
+        id: { in: regionsWhereToReactivate },
+      },
+      data: {
+        isActive: true,
+      },
+    });
+
+    regionsReactivated = await prisma.commune.findMany({
+      where: {
+        id: { in: regionsWhereToReactivate },
+      },
+    });
+  }
+
+  // Update the map with the newly created and reactivated wilayas
+  regionsCreated.forEach((reg) => regionsMap.set(reg.postalCode, reg));
+  regionsReactivated.forEach((reg) => regionsMap.set(reg.postalCode, reg));
 
   return {
     regionsMap,
-    regionsCreated: createdRegions,
-    regionsReactivated: reactivatedRegions,
+    regionsCreated,
+    regionsReactivated,
   };
 };
 

@@ -67,7 +67,11 @@ export const apiService = {
         body: data instanceof FormData ? data : JSON.stringify(data),
         ...config,
       }),
-    delete: (url, config) =>
-      fetchRequest(API_BASE_URL + url, { method: "DELETE", ...config }),
+    delete: (url, data, config) =>
+      fetchRequest(API_BASE_URL + url, {
+        method: "DELETE",
+        body: data instanceof FormData ? data : JSON.stringify(data),
+        ...config,
+      }),
   },
 };

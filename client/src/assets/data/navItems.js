@@ -51,19 +51,14 @@ export const navItems = [
     icon: LocationOnRoundedIcon,
     children: [
       {
-        title: "Import/Export",
-        icon: ImportExportRoundedIcon,
-        path: "/admin/geographical/import-export",
-      },
-      {
-        title: "Delivery Methods",
+        title: "Delivery Services",
         icon: LocalShippingRoundedIcon,
-        path: "/admin/geographical/delivery",
+        path: "/admin/geo/services",
       },
       {
         title: "Shipping zones",
         icon: PublicRoundedIcon,
-        path: "/admin/geographical/shipping-zones",
+        path: "/admin/geo/szones",
       },
     ],
   },

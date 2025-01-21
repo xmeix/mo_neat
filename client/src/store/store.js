@@ -5,8 +5,8 @@ import {
 } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice.js";
 import productReducer from "./slices/productSlice.js";
-import couponReducer from "./slices/couponSlice.js";
-import geoReducer from "./slices/geoSlice.js";
+import couponReducer from "./slices/couponSlice.js"; 
+import deliveryReducer from "./slices/deliverySlice.js";
 import {
   persistStore,
   persistReducer,
@@ -20,10 +20,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import { getAllProducts } from "./apiCalls/product.js";
 import { login } from "./apiCalls/auth.js";
-import { getAllCoupons } from "./apiCalls/coupon.js";
-import { getAllWilayas } from "./apiCalls/wilaya.js";
-import { getAllCommunes } from "./apiCalls/commune.js";
-import { addBatchDTC, addBatchDTD } from "./apiCalls/delivery.js";
+import { getAllCoupons } from "./apiCalls/coupon.js"; 
 
 const persistConfig = {
   key: "root",
@@ -35,7 +32,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
   coupon: couponReducer,
-  geo: geoReducer,
+  delivery: deliveryReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -49,13 +46,14 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllProducts());
     console.log("listen ... dispatch coupons.");
     listenerApi.dispatch(getAllCoupons());
-    console.log("listen ... dispatch wilayas.");
+    /*    console.log("listen ... dispatch wilayas.");
     listenerApi.dispatch(getAllWilayas());
     console.log("listen ... dispatch centers.");
-    listenerApi.dispatch(getAllCommunes());
+    listenerApi.dispatch(getAllCommunes());*/
   },
 });
 
+/*
 listenerMiddleware.startListening({
   actionCreator: addBatchDTD.fulfilled,
   effect: async (action, listenerApi) => {
@@ -77,7 +75,7 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllStopDesks());
   },
 });
-
+*/
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
