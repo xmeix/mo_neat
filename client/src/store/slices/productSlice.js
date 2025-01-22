@@ -5,18 +5,8 @@ import {
   getAllProducts,
   updateProduct,
 } from "../apiCalls/product";
-const initData = {
-  title: "",
-  description: "",
-  images: [],
-  stock: 1,
-  categories: [],
-  sizes: [],
-  colors: [],
-  onSale: "false",
-  price_before_sale: 0,
-  discountPercentage: 0,
-};
+import { initData } from "../../assets/data/formInitData";
+
 const productSlice = createSlice({
   name: "product",
   initialState: {

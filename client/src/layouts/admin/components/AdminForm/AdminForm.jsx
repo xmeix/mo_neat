@@ -7,7 +7,7 @@ import ImagesInput from "../../../../components/imagesInput/ImagesInput";
 import TextArea from "../../../../components/textArea/TextArea";
 
 const AdminForm = ({
-  formInputs,
+  inputs,
   data,
   title,
   handleAction,
@@ -126,8 +126,8 @@ const AdminForm = ({
     [formData, formErrors]
   );
 
-  const renderFormInputs = () => {
-    return formInputs.map((input, index) => {
+  const renderFormInputs = (formInputs) => {
+    return formInputs?.map((input, index) => {
       const renderedInput = renderInput(input, index);
 
       if (input.children) {
@@ -150,7 +150,14 @@ const AdminForm = ({
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="admin-form-title">{title}</div>
-      <div className="inputs">{renderFormInputs()}</div>
+      <div className="inputs-container">
+        {inputs?.map((input, i) => (
+          <div key={i} className="inputs-section">
+            <div className="inputs-sectionTitle">{input.title}</div>
+            <div className="inputs">{renderFormInputs(input.children)}</div>
+          </div>
+        ))}
+      </div>
       <Button text={btnTitle} type="submit" />
     </form>
   );

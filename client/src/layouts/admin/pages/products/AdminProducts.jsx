@@ -257,10 +257,16 @@ const AdminProducts = () => {
         onCreate={onCreate}
       />
       {drawerType && (
-        <Drawer title={drawerType === "add" ? "Add Product" : "Edit Product"}>
+        <Drawer
+          title={
+            drawerType === "add"
+              ? "Create New Product"
+              : "Update Product Details"
+          }
+        >
           <AdminForm
             data={formData}
-            formInputs={productFormInputs}
+            inputs={productFormInputs}
             handleAction={drawerType === "add" ? handleCreate : handleEdit}
             validationMethod={isValidProduct}
             btnTitle={drawerType === "add" ? "Add" : "Save"}

@@ -11,22 +11,50 @@ import {
   getAllShippingZones,
   updateShippingZone,
 } from "../apiCalls/shippingZone";
+import {
+  serviceInitFormData,
+  shippingZoneInitFormData,
+} from "../../assets/data/formInitData";
 
 const deliverySlice = createSlice({
   name: "delivery",
   initialState: {
     services: [],
-    shippingZones: [],
+    zones: [],
+    serviceFormData: serviceInitFormData,
+    zoneFormData: shippingZoneInitFormData,
+    serviceDrawerType: null,
+    zoneDrawerType: null,
     loading: false,
     error: null,
     success: null,
   },
   reducers: {
+    setServiceForm: (state, action) => {
+      state.serviceFormData = action.payload;
+    },
+    resetServiceForm: (state, action) => {
+      state.serviceFormData = serviceInitFormData;
+    },
+    setServiceDrawerType(state, action) {
+      state.serviceDrawerType = action.payload;
+    },
+    setZoneForm: (state, action) => {
+      state.zoneFormData = action.payload;
+    },
+    resetZoneForm: (state, action) => {
+      state.zoneFormData = serviceInitFormData;
+    },
+    setZoneDrawerType(state, action) {
+      state.zoneDrawerType = action.payload;
+    },
     reset: (state) => {
-      state.wilayas = null;
+      state.products = null;
       state.error = null;
       state.loading = false;
       state.success = null;
+      state.serviceFormData = serviceInitFormData;
+      state.serviceDrawerType = null;
     },
     setError: (state, action) => {
       state.error = action.payload.message || action.payload;
@@ -112,7 +140,7 @@ const deliverySlice = createSlice({
     });
     builder.addCase(getAllShippingZones.fulfilled, (state, action) => {
       state.loading = false;
-      state.shippingZones = action.payload.data;
+      state.zones = action.payload.data;
     });
 
     builder.addCase(getAllShippingZones.rejected, (state, action) => {
@@ -133,7 +161,7 @@ const deliverySlice = createSlice({
         regionsCreated,
         regionsReactivated,
       } = action.payload.data;
-      state.shippingZones.push(newShippingZone);
+      state.zones.push(newShippingZone);
       //TODO:push created wilayas to the wilayas state
       //TODO:push created regions to the regions state
       //TODO:update wilayas reactivated using id
@@ -153,7 +181,7 @@ const deliverySlice = createSlice({
       state.success = action.payload.message;
       const deletedIds = action.payload.data || [];
 
-      state.shippingZones = state.shippingZones.filter(
+      state.zones = state.zones.filter(
         (shippingZone) => !deletedIds.includes(shippingZone.id)
       );
     });
@@ -172,7 +200,7 @@ const deliverySlice = createSlice({
       state.success = action.payload.message;
       const { updatedDeliveryArea, communeReactivated, wilayaReactivated } =
         action.payload.data;
-      state.shippingZones = state.services.filter(
+      state.zones = state.zones.filter(
         (e, i) => e.id !== updatedDeliveryArea.id
       );
       state.shippingZones.push(updatedDeliveryArea);
@@ -186,5 +214,15 @@ const deliverySlice = createSlice({
   },
 });
 
-export const { reset, resetError, setError } = deliverySlice.actions;
+export const {
+  reset,
+  resetError,
+  setError,
+  setServiceForm,
+  setServiceDrawerType,
+  resetServiceForm,
+  setZoneForm,
+  setZoneDrawerType,
+  resetZoneForm,
+} = deliverySlice.actions;
 export default deliverySlice.reducer;

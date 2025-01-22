@@ -5,18 +5,21 @@ import useToast from "../../../../../utils/hooks/toast/useToast";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  resetServiceForm,
+  setServiceDrawerType,
+  setServiceForm,
+} from "../../../../../store/slices/deliverySlice";
+import Table from "../../../../../components/table/Table";
+import { serviceFormInputs } from "../../../../../assets/data/formsData";
+import AdminForm from "../../../components/AdminForm/AdminForm";
+import { isValidDeliveryService } from "../../../../../utils/functions";
 
 const columns = [
-  { header: "Title", accessor: "title" },
-  { header: "Description", accessor: "description" },
-  { header: "Price - DA", accessor: "price_before_sale" },
-  { header: "Discount - %", accessor: "discountPercentage" },
-  { header: "Stock", accessor: "stock" },
-  { header: "On Sale", accessor: "onSale" },
-  { header: "Images", accessor: "images" },
-  { header: "Sizes", accessor: "sizes" },
-  { header: "Colors", accessor: "colors" },
-  { header: "Categories", accessor: "categories" },
+  { header: "Code", accessor: "tmCode" },
+  { header: "Title", accessor: "tmName" },
+  { header: "Description", accessor: "tmDescription" },
+  { header: "Carrier", accessor: "carrierName" },
   { header: "Created", accessor: "createdAt" },
   { header: "Updated", accessor: "updatedAt" },
 ];
@@ -26,8 +29,14 @@ const DeliveryServices = () => {
   const { Toast, showErrorToast, showSuccessToast, showInfoToast } = useToast();
 
   const dispatch = useDispatch();
-  const { deliveryServices, loading, error, success, formData, drawerType } =
-    useSelector((state) => state.deliveryService);
+  const {
+    services,
+    loading,
+    error,
+    success,
+    serviceFormData,
+    serviceDrawerType,
+  } = useSelector((state) => state.delivery);
 
   const toggleActions = [
     {
@@ -74,81 +83,65 @@ const DeliveryServices = () => {
     },
   ];
 
-  const handleActivation = async (row) => {
-  
-  };
+  const handleActivation = async (row) => {};
   const onCreate = () => {
-    dispatch(resetFormData());
+    dispatch(resetServiceForm());
     setShowDrawer(true);
-    dispatch(setDrawerType("add"));
+    dispatch(setServiceDrawerType("add"));
   };
 
   const handleDelete = async (id) => {
     console.log("Delete Product", id);
-  
   };
 
   const handleCreate = async (data, e) => {
     e.preventDefault();
-  
   };
 
   const onEdit = (row) => {
-    dispatch(setDrawerType("edit"));
+    dispatch(setServiceDrawerType("edit"));
     setShowDrawer(true);
-    dispatch(setFormData(row));
+    dispatch(setServiceForm(row));
   };
 
   const handleEdit = async (data, e) => {
     e.preventDefault();
-
- 
   };
 
-  const transformedProducts = products
-    .map((product) => ({
-      ...product,
-      categories: product.categories.map((category) => category.title), // Show only titles
-    }))
+  const transformedServices = services
+    .map((s) => s)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+  console.log(transformedServices);
   return (
     <div className="admin-products">
       <Table
         columns={columns}
-        data={transformedProducts}
+        data={transformedServices}
         actions={{ normal: actions, toggle: toggleActions }}
         rowsPerPage={5}
-        title="Product Management"
-        unit="product(s)"
+        title="Delivery services Management"
+        unit="service(s)"
         cardSections={{
-          headers: ["title", "description"],
-          content: ["price_before_sale"],
-          special: ["onSale"],
+          headers: ["tmCode", "tmName", "tmDescription"],
+          content: ["carrierName"],
+          special: [],
           footer: ["createdAt", "updatedAt"],
         }}
-        banned={[
-          [],
-          [
-            "description",
-            "images",
-            "createdAt",
-            "updatedAt",
-            "sizes",
-            "colors",
-            "categories",
-          ],
-        ]}
+        banned={[[], ["createdAt", "updatedAt", "tmDescription"]]}
         onCreate={onCreate}
       />
-      {drawerType && (
-        <Drawer title={drawerType === "add" ? "Add Product" : "Edit Product"}>
+      {serviceDrawerType && (
+        <Drawer
+          title={serviceDrawerType === "add" ? "Add Service" : "Edit Service"}
+        >
           <AdminForm
-            data={formData}
-            formInputs={productFormInputs}
-            handleAction={drawerType === "add" ? handleCreate : handleEdit}
-            validationMethod={isValidProduct}
-            btnTitle={drawerType === "add" ? "Add" : "Save"}
+            data={serviceFormData}
+            inputs={serviceFormInputs}
+            handleAction={
+              serviceDrawerType === "add" ? handleCreate : handleEdit
+            }
+            validationMethod={isValidDeliveryService}
+            btnTitle={serviceDrawerType === "add" ? "Add" : "Save"}
           />
         </Drawer>
       )}

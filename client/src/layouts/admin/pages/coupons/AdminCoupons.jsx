@@ -136,10 +136,12 @@ const AdminCoupons = () => {
         onCreate={onCreate}
       />
       {drawerType && (
-        <Drawer title={drawerType === "add" ? "Add Coupon" : "Edit Coupon"}>
+        <Drawer
+          title={drawerType === "add" ? "Create new Coupon" : "Update Coupon"}
+        >
           <AdminForm
             data={formData}
-            formInputs={couponFormInputs}
+            inputs={couponFormInputs}
             handleAction={drawerType === "add" ? handleCreate : handleEdit}
             validationMethod={isValidCoupon}
             btnTitle={drawerType === "add" ? "Add" : "Save"}

@@ -8,6 +8,9 @@ export const isValidHex = (hex) => {
   console.log(hexRegex.test(hex.trim()));
   return hexRegex.test(hex);
 };
+
+export const isValidDeliveryService = (data) => {};
+
 export const isValidProduct = (data) => {
   const errors = {};
 

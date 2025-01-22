@@ -35,7 +35,22 @@
 
       .drawer-title {
         font-weight: 800;
-        font-size: 20px;
+        font-size: 15px;
+        @include media(sm) {
+          font-size: 20px;
+        }
+        @include media(md) {
+          font-size: 20px;
+        }
+        @include media(lg) {
+          font-size: 25px;
+        }
+        @include media(xl) {
+          font-size: 25px;
+        }
+        @include media(xxl) {
+          font-size: 25px;
+        }
       }
     }
 

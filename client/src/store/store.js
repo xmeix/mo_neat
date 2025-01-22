@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice.js";
 import productReducer from "./slices/productSlice.js";
-import couponReducer from "./slices/couponSlice.js"; 
+import couponReducer from "./slices/couponSlice.js";
 import deliveryReducer from "./slices/deliverySlice.js";
 import {
   persistStore,
@@ -20,7 +20,9 @@ import {
 import storage from "redux-persist/lib/storage";
 import { getAllProducts } from "./apiCalls/product.js";
 import { login } from "./apiCalls/auth.js";
-import { getAllCoupons } from "./apiCalls/coupon.js"; 
+import { getAllCoupons } from "./apiCalls/coupon.js";
+import { getAllServices } from "./apiCalls/service.js";
+import { getAllShippingZones } from "./apiCalls/shippingZone.js";
 
 const persistConfig = {
   key: "root",
@@ -46,6 +48,10 @@ listenerMiddleware.startListening({
     listenerApi.dispatch(getAllProducts());
     console.log("listen ... dispatch coupons.");
     listenerApi.dispatch(getAllCoupons());
+    console.log("listen ... dispatch services.");
+    listenerApi.dispatch(getAllServices());
+    console.log("listen ... dispatch shipping zones.");
+    listenerApi.dispatch(getAllShippingZones());
     /*    console.log("listen ... dispatch wilayas.");
     listenerApi.dispatch(getAllWilayas());
     console.log("listen ... dispatch centers.");

@@ -10,6 +10,26 @@ const TableCard = ({ row, actions, content, columns }) => {
   const getLabel = (key) => {
     return columns.find((col) => col.accessor === key)?.header;
   };
+  const render = (header) => {
+    const keys = header.split(".");
+
+    const getValue = (obj, keys) => {
+      for (const key of keys) {
+        if (!obj || obj[key] === undefined) return undefined;
+        obj = obj[key];
+      }
+      return obj;
+    };
+
+    return columns.reduce((value, col) => {
+      if (value) return value;
+
+      const childKeys = col.children ? [col.accessor, ...keys.slice(1)] : keys;
+      return (
+        (col.accessor === keys[0] && getValue(row, childKeys)) || undefined
+      );
+    }, undefined);
+  };
 
   return (
     <div className="table-card">
@@ -40,7 +60,7 @@ const TableCard = ({ row, actions, content, columns }) => {
                 index === 0 ? "card-header-primary" : "card-header-secondary"
               }
             >
-              {String(row[header])}
+              {render(header)}
             </div>
           ))}
         </div>
@@ -53,12 +73,12 @@ const TableCard = ({ row, actions, content, columns }) => {
                   index === 0 ? "card-header-primary" : "card-header-secondary"
                 }
               >
-                {header.includes("price") ? (
+                {header.includes("price") || header.includes("Fee") ? (
                   <div className="price-div">
-                    {row[header]} <span className="currency">DA</span>{" "}
+                    {render(header)} <span className="currency">DA</span>{" "}
                   </div>
                 ) : (
-                  String(row[header])
+                  render(header)
                 )}
               </div>
             ))}
@@ -68,10 +88,10 @@ const TableCard = ({ row, actions, content, columns }) => {
               <div
                 key={index}
                 className={
-                  row[header] === false ? "" : "card-special-primary false-bg"
+                  render(header) === false ? "" : "card-special-primary false-bg"
                 }
               >
-                {row[header] === false
+                {render(header) === false
                   ? ""
                   : getLabel(header).concat(
                       header === "onSale" || header === "discountPercentage"

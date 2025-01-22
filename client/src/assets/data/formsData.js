@@ -46,47 +46,289 @@ export const userFormInputs = [
   },
 ];
 
+export const serviceFormInputs = [
+  {
+    title: "Service Details",
+    children: [
+      {
+        label: "Name",
+        name: "tmName",
+        placeholder: "Enter the delivery method name",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Code",
+        name: "tmCode",
+        placeholder: "Enter the delivery method code (must be unique)",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Description",
+        name: "tmDescription",
+        placeholder: "Enter the delivery method code",
+        type: "text",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Carrier Details",
+    children: [
+      {
+        label: "Carrier Name",
+        name: "carrierName",
+        placeholder: "Enter the carrier name",
+        type: "text",
+        value: "",
+      },
+    ],
+  },
+];
+export const zoneFormInputs = [
+  {
+    title: "Basic Information",
+    children: [
+      {
+        label: "Shipping Zone Name",
+        name: "shippingZoneName",
+        placeholder: "Enter the shipping zone name",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Carrier Name",
+        name: "carrierName",
+        placeholder: "Enter the carrier name",
+        type: "text",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Address Information",
+    children: [
+      {
+        label: "Address",
+        name: "address",
+        placeholder: "Enter the delivery address",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Postal Code",
+        name: "postalCode",
+        placeholder: "Enter the postal code",
+        type: "number",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Service Information",
+    children: [
+      {
+        label: "Service Type",
+        name: "serviceType",
+        placeholder: "Enter the service type",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Delivery Fee",
+        name: "deliveryFee",
+        placeholder: "Enter the delivery fee",
+        type: "number",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Regions",
+    children: [
+      {
+        title: "",
+        children: [
+          {
+            label: "Commune",
+            name: "commune",
+            placeholder: "Enter the commune name",
+            type: "text",
+            value: "",
+          },
+          {
+            label: "Wilaya",
+            name: "wilaya",
+            placeholder: "Enter the wilaya name",
+            type: "text",
+            value: "",
+          },
+          {
+            label: "Postal Code",
+            name: "postalCode",
+            placeholder: "Enter the postal code",
+            type: "number",
+            value: "",
+          },
+        ],
+      },
+    ],
+  },
+];
+
 export const productFormInputs = [
   {
-    label: "Title",
-    name: "title",
-    placeholder: "Enter the product title",
-    type: "text",
-    value: "",
-  },
-  {
-    label: "Description",
-    name: "description",
-    placeholder: "Enter the product description",
-    type: "textarea",
-    value: "",
-  },
-  {
-    label: "Price",
-    name: "price_before_sale",
-    placeholder: "Enter the original price",
-    type: "number",
-    value: "",
-  },
-  {
-    label: "Stock",
-    name: "stock",
-    placeholder: "Enter the stock quantity",
-    type: "number",
-    value: "",
-  },
-  {
-    label: "On Sale",
-    name: "onSale",
-    placeholder: "Is the product on sale?",
-    type: "select",
-    options: [
-      { label: "Yes", value: "true" },
-      { label: "No", value: "false" },
+    title: "Basic Information",
+    children: [
+      {
+        label: "Title",
+        name: "title",
+        placeholder: "Enter the product title",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Description",
+        name: "description",
+        placeholder: "Enter the product description",
+        type: "textarea",
+        value: "",
+      },
     ],
-    value: "",
-    isMulti: false,
-    creatable: false,
+  },
+  {
+    title: "Pricing",
+    children: [
+      {
+        label: "Price",
+        name: "price_before_sale",
+        placeholder: "Enter the original price",
+        type: "number",
+        value: "",
+      },
+      {
+        label: "On Sale",
+        name: "onSale",
+        placeholder: "Is the product on sale?",
+        type: "select",
+        options: [
+          { label: "Yes", value: "true" },
+          { label: "No", value: "false" },
+        ],
+        value: "",
+        isMulti: false,
+        creatable: false,
+        children: [
+          {
+            label: "Discount Percentage",
+            name: "discountPercentage",
+            placeholder: "Enter the discount percentage",
+            type: "number",
+            value: "",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Stock Management",
+    children: [
+      {
+        label: "Stock",
+        name: "stock",
+        placeholder: "Enter the stock quantity",
+        type: "number",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Product Attributes",
+    children: [
+      {
+        label: "Sizes",
+        name: "sizes",
+        placeholder: "Select the product sizes",
+        type: "select",
+        options: [
+          { label: "37", value: "37" },
+          { label: "XL", value: "XL" },
+          { label: "M", value: "M" },
+        ],
+        isMulti: true,
+        value: "",
+        creatable: true,
+      },
+      {
+        label: "Colors",
+        name: "colors",
+        placeholder: "Select the product colors",
+        type: "select",
+        options: [
+          { value: "#ff0000", label: "Red" },
+          { value: "#00ff00", label: "Green" },
+          { value: "#0000ff", label: "Blue" },
+        ],
+        isMulti: true,
+        value: "",
+        creatable: true,
+        isColor: true,
+      },
+      {
+        label: "Categories",
+        name: "categories",
+        placeholder: "Select the product category",
+        type: "select",
+        options: [
+          { label: "Electronics", value: "ELECTRONICS" },
+          { label: "Fashion", value: "FASHION" },
+          { label: "Home & Garden", value: "HOME_GARDEN" },
+          { label: "Health & Beauty", value: "HEALTH_BEAUTY" },
+          { label: "Sports & Outdoors", value: "SPORTS_OUTDOORS" },
+        ],
+        isMulti: true,
+        value: "",
+        creatable: true,
+      },
+    ],
+  },
+  {
+    title: "Media",
+    children: [
+      {
+        label: "Images",
+        name: "images",
+        placeholder: "Upload all images",
+        type: "file",
+        value: "",
+      },
+    ],
+  },
+];
+
+export const couponFormInputs = [
+  {
+    title: "Coupon Details",
+    children: [
+      {
+        label: "Coupon Name",
+        name: "name",
+        placeholder: "Enter the coupon name",
+        type: "text",
+        value: "",
+      },
+      {
+        label: "Coupon Code",
+        name: "code",
+        placeholder: "Enter the coupon code",
+        type: "text",
+        value: "",
+      },
+    ],
+  },
+  {
+    title: "Discount Information",
     children: [
       {
         label: "Discount Percentage",
@@ -95,99 +337,29 @@ export const productFormInputs = [
         type: "number",
         value: "",
       },
+      {
+        label: "Description",
+        name: "description",
+        placeholder: "Enter the coupon description",
+        type: "textarea",
+        value: "",
+      },
     ],
   },
   {
-    label: "Sizes",
-    name: "sizes",
-    placeholder: "Select the product sizes",
-    type: "select",
-    options: [
-      { label: "37", value: "37" },
-      { label: "XL", value: "XL" },
-      { label: "M", value: "M" },
+    title: "Validity Period",
+    children: [
+      {
+        label: "Expiry Date",
+        name: "expiryDate",
+        placeholder: "Enter the expiry date (YYYY-MM-DD)",
+        type: "date",
+        value: "",
+      },
     ],
-    isMulti: true,
-    value: "",
-    creatable: true,
-  },
-  {
-    label: "Colors",
-    name: "colors",
-    placeholder: "Select the product colors",
-    type: "select",
-    options: [
-      { value: "#ff0000", label: "Red" },
-      { value: "#00ff00", label: "Green" },
-      { value: "#0000ff", label: "Blue" },
-    ],
-    isMulti: true,
-    value: "",
-    creatable: true,
-    isColor: true,
-  },
-  {
-    label: "Categories",
-    name: "categories",
-    placeholder: "Select the product category",
-    type: "select",
-    options: [
-      { label: "Electronics", value: "ELECTRONICS" },
-      { label: "Fashion", value: "FASHION" },
-      { label: "Home & Garden", value: "HOME_GARDEN" },
-      { label: "Health & Beauty", value: "HEALTH_BEAUTY" },
-      { label: "Sports & Outdoors", value: "SPORTS_OUTDOORS" },
-    ],
-    isMulti: true,
-    value: "",
-    creatable: true,
-  },
-  {
-    label: "Images",
-    name: "images",
-    placeholder: "Upload all images",
-    type: "file",
-    value: "",
   },
 ];
 
-export const couponFormInputs = [
-  {
-    label: "Coupon Name",
-    name: "name",
-    placeholder: "Enter the coupon name",
-    type: "text",
-    value: "",
-  },
-  {
-    label: "Coupon Code",
-    name: "code",
-    placeholder: "Enter the coupon code",
-    type: "text",
-    value: "",
-  },
-  {
-    label: "Discount Percentage",
-    name: "discountPercentage",
-    placeholder: "Enter the discount percentage",
-    type: "number",
-    value: "",
-  },
-  {
-    label: "Description",
-    name: "description",
-    placeholder: "Enter the coupon description",
-    type: "textarea",
-    value: "",
-  },
-  {
-    label: "Expiry Date",
-    name: "expiryDate",
-    placeholder: "Enter the expiry date (YYYY-MM-DD)",
-    type: "date",
-    value: "",
-  },
-];
 export const wilayaFormInputs = [
   {
     label: "Name",
