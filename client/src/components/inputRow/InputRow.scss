@@ -1,0 +1,66 @@
+@import "../../App.scss";
+@import "../../index.scss";
+
+.inputRows {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1em;
+
+  .input-row {
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+
+    @include media(sm) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    @include media(md) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    @include media(lg) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    @include media(xl) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    @include media(xxl) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    input,
+    textarea,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .inputs-container {
+      display: flex;
+    }
+  }
+
+  button {
+    align-self: flex-end;
+    background-color: transparent;
+
+    transition: all 0.3s;
+    &:hover {
+      background-color: $button-background-color;
+      color: $button-text-color;
+    }
+  }
+
+  .button-remove {
+    color: $notexist;
+    width: 100% !important;
+    border: solid 1px $notexist;
+    &:hover {
+      background-color: $notexist;
+      color: $button-text-color;
+    }
+  }
+  .button-add {
+    margin: 1em 0;
+    color: $button-background-color;
+    border: solid 1px $button-background-color;
+  }
+}

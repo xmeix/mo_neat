@@ -120,10 +120,24 @@ a {
 }
 
 label {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   padding: 0.2em 0.5em;
   text-transform: capitalize;
+  white-space: nowrap;
+
+  @include media(md) {
+    font-size: 14px;
+  }
+  @include media(lg) {
+    font-size: 14px;
+  }
+  @include media(xl) {
+    font-size: 14px;
+  }
+  @include media(xxl) {
+    font-size: 14px;
+  }
 }
 
 input,
@@ -140,9 +154,22 @@ textarea {
 
   &::placeholder,
   &::placeholder {
-    font-size: 14px;
+    font-size: 12px;
     color: $input-placeholder-color;
     text-transform: lowercase;
+
+    @include media(md) {
+      font-size: 14px;
+    }
+    @include media(lg) {
+      font-size: 14px;
+    }
+    @include media(xl) {
+      font-size: 14px;
+    }
+    @include media(xxl) {
+      font-size: 14px;
+    }
   }
 
   &:focus {

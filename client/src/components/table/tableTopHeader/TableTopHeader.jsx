@@ -13,7 +13,7 @@ const TableTopHeader = ({ data, unit, title, onCreate }) => {
       </div>
       {windowWidth >= 768 ? (
         <button className="create-btn" onClick={onCreate}>
-          Create {unit.slice(0, -1)}
+          Create {unit.slice(0, -3)}
         </button>
       ) : (
         <button className="create-btn-sm" onClick={onCreate}>

@@ -31,6 +31,13 @@ const TableCard = ({ row, actions, content, columns }) => {
     }, undefined);
   };
 
+  const getEnumValue = (key) => {
+    console.log("------");
+    console.log(row);
+  };
+
+  getEnumValue("regions");
+
   return (
     <div className="table-card">
       <ActionMenu
@@ -83,12 +90,15 @@ const TableCard = ({ row, actions, content, columns }) => {
               </div>
             ))}
           </div>
+
           <div className="card-special">
             {content.special.map((header, index) => (
               <div
                 key={index}
                 className={
-                  render(header) === false ? "" : "card-special-primary false-bg"
+                  render(header) === false
+                    ? ""
+                    : "card-special-primary false-bg"
                 }
               >
                 {render(header) === false

@@ -5,6 +5,7 @@ import Input from "../../../../components/input/Input";
 import Button from "../../../../components/button/Button";
 import ImagesInput from "../../../../components/imagesInput/ImagesInput";
 import TextArea from "../../../../components/textArea/TextArea";
+import InputRow from "../../../../components/inputRow/InputRow";
 
 const AdminForm = ({
   inputs,
@@ -16,6 +17,9 @@ const AdminForm = ({
 }) => {
   const [formData, setFormData] = useState(data);
   const [formErrors, setFormErrors] = useState({});
+
+  console.log("formData");
+  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -108,6 +112,19 @@ const AdminForm = ({
             error={error}
           />
         );
+      } else if (input.type === "inputRow") {
+        return (
+          <InputRow
+            key={index}
+            name={input.name}
+            value={input.value}
+            onChange={handleChange}
+            error={error}
+            addItem={() => {}}
+            removeItem={() => {}}
+            kids={input.children}
+          />
+        );
       } else {
         return (
           <Input
@@ -130,7 +147,7 @@ const AdminForm = ({
     return formInputs?.map((input, index) => {
       const renderedInput = renderInput(input, index);
 
-      if (input.children) {
+      if (input.children && !(input.type === "inputRow")) {
         const shouldShowChildren = formData[input.name] === "true";
         return (
           <Fragment key={index}>

@@ -18,6 +18,13 @@ export const serviceInitFormData = {
   tmName: "",
   tmDescription: "",
   carrierName: "",
+  regions: [
+    {
+      postalCode: 0,
+      commune: "",
+      wilaya: "",
+    },
+  ],
 };
 
 export const shippingZoneInitFormData = {

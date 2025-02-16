@@ -145,30 +145,34 @@ export const zoneFormInputs = [
     ],
   },
   {
-    title: "Regions",
+    title: "Regions Coverage",
     children: [
       {
-        title: "",
+        name: "regions",
+        label: "Regions",
+        type: "inputRow",
+        value: [{ postalCode: "", commune: "", wilaya: "" }],
+        placeholder: "Enter the regions",
         children: [
           {
-            label: "Commune",
-            name: "commune",
-            placeholder: "Enter the commune name",
-            type: "text",
-            value: "",
-          },
-          {
-            label: "Wilaya",
-            name: "wilaya",
-            placeholder: "Enter the wilaya name",
-            type: "text",
-            value: "",
-          },
-          {
-            label: "Postal Code",
             name: "postalCode",
-            placeholder: "Enter the postal code",
+            label: "Postal Code",
             type: "number",
+            placeholder: "Postal Code",
+            value: "",
+          },
+          {
+            name: "wilaya",
+            label: "Wilaya",
+            type: "text",
+            placeholder: "Wilaya",
+            value: "",
+          },
+          {
+            name: "commune",
+            label: "Commune",
+            type: "text",
+            placeholder: "Commune",
             value: "",
           },
         ],

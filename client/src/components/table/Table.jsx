@@ -65,6 +65,7 @@ const Table = ({
                   content={{
                     headers: cardSections.headers,
                     main: cardSections.content,
+                    enum: cardSections.enum,
                     special: cardSections.special,
                     footer: cardSections.footer,
                   }}
