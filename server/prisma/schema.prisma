@@ -57,41 +57,87 @@ model Order {
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
 }
+model Carrier {
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  isActive         Boolean          @default(true)
+ 
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
+  deliveryServices DeliveryService[]
+}
 model DeliveryService {
   id               Int              @id @default(autoincrement())
-  tmCode           String            
-  tmName           String            
-  tmDescription    String?
-  carrierName      String           @default("")
+  code           String            
+  name           String 
+  description      String?           @default("")
+  carrierId        Int              
   isActive         Boolean          @default(true)
+  isRelay         Boolean          @default(true)
 
-  deliveryAreas    DeliveryArea[]   // Linked delivery areas (e.g., StopDesks, Home Deliveries)
+  
+  relayPoints      RelayPoint[] 
+  homeDeliveryZones HomeDeliveryZone[]
+  shippingZones    ShippingZone[]
+
 
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+
+  carrier           Carrier          @relation(fields: [carrierId], references: [id], onDelete: Cascade)
+
 }
 
-model DeliveryArea {
+model ShippingZone {
   id               Int              @id @default(autoincrement())
   name             String?            // specific name for StopDesk
-  address          String?          // Specific address for StopDesk or other area types
   
-  communeId        Int              // Foreign key linking to the Commune
-  commune          Commune          @relation(fields: [communeId], references: [id], onDelete: Cascade)
-
-  areaType         String         // StopDesk, Home, etc.
+  communes          Commune[]
+  services DeliveryService[]
   
-  deliveryFee      Int              // Fee for delivery to this area
   isActive         Boolean          @default(true)
-
-  deliveryServiceId Int?
-  deliveryService   DeliveryService? @relation(fields: [deliveryServiceId], references: [id], onDelete: Cascade) // Links to DeliveryService
-
+ 
  
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
+
+model HomeDeliveryZone {
+  id               Int              @id @default(autoincrement())
+  deliveryFee      Int               @default(0)
+  
+  communeId        Int
+  serviceId        Int
+  isActive         Boolean                    @default(true)
+
+
+  service           DeliveryService           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  commune           Commune                   @relation(fields: [communeId], references: [id], onDelete: Cascade)  
+ 
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model RelayPoint {
+  id               Int              @id @default(autoincrement())
+  name String
+  address String
+  
+  deliveryFee      Int               @default(0)
+  
+  communeId        Int
+  serviceId        Int
+  isActive         Boolean                    @default(true)
+
+
+  service           DeliveryService           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  commune           Commune                   @relation(fields: [communeId], references: [id], onDelete: Cascade)  
+ 
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
 
 model Commune {
   id               Int              @id @default(autoincrement())
@@ -100,7 +146,9 @@ model Commune {
   wilaya           Wilaya           @relation(fields: [wilayaId], references: [id], onDelete: Cascade)
   postalCode       Int              @unique
 
-  deliveryAreas    DeliveryArea[]   // All delivery areas (StopDesks, etc.) in this commune
+  shippingZones    ShippingZone[]
+  homeDeliveryZones HomeDeliveryZone[]
+  relayPoints      RelayPoint[]
 
   isActive         Boolean          @default(true)
   createdAt        DateTime         @default(now())
@@ -110,6 +158,7 @@ model Commune {
 model Wilaya {
   id               Int              @id @default(autoincrement())
   name             String           @unique
+  code             Int           @unique
   communes         Commune[]        // Communes within this Wilaya
 
   isActive         Boolean          @default(true)

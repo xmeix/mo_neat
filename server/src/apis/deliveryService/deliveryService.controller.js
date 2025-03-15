@@ -1,47 +1,100 @@
 import prisma from "../../db/prismaClient.js";
 import BaseError from "../../utils/errors/BaseError.js";
-import ValidationError from "../../utils/errors/ValidationError.js";
-import { DeliveryServiceValidation } from "../../validation/deliveryService.validation.js";
+import {
+  createCarrier,
+  createRelayPoints,
+  createZones,
+} from "../apis.helpers.js";
 
 export const createDeliveryService = async (req, res, next) => {
   try {
-    const { tmCode, tmName, tmDescription, carrierName, isActive } = req.body;
+    const {
+      name,
+      code,
+      description,
+      carrierName,
+      isRelay,
+      zones,
+      relayPoints,
+    } = req.body;
 
-    const { error } = DeliveryServiceValidation.validate(req.body);
-
-    if (error) {
-      throw new ValidationError(error.details[0].message);
-    }
-
-    // Validate service existence
+    // check if the delivery service already exists ( code + carrierName )
     const existingService = await prisma.deliveryService.findFirst({
-      where: { tmCode, carrierName },
+      where: {
+        code,
+        carrier: {
+          name: carrierName,
+        },
+      },
     });
 
-    if (existingService) {
+    if (existingService && existingService.isActive) {
       throw new BaseError(
         "Validation Error",
         409,
         true,
         "Delivery service already exists"
       );
+    } else if (existingService && !existingService.isActive) {
+      throw new BaseError(
+        "Validation Error",
+        409,
+        true,
+        "Delivery service already exists, but inactive, please reactivate it"
+      );
     }
 
-    // Create new delivery service
+    // check if the carrierName exists in the database or create a new one
+    const carrier = createCarrier(carrierName);
+
+    // create empty service before adding zones and relay points
     const newDeliveryService = await prisma.deliveryService.create({
       data: {
-        tmCode: tmCode.toUpperCase(),
-        tmName: tmName.toLowerCase(),
-        tmDescription: tmDescription.toLowerCase(),
-        carrierName: carrierName.toLowerCase(),
-        isActive,
+        name,
+        code,
+        description,
+        carrierId: carrier.id,
       },
     });
 
-    res.status(201).json({
+    // relay points ==> [{name , address, deliveryFee, communeId,  isActive}]
+    // --> creaate delivery service where communeId exists in the database else put them in an array
+    // zones ==> [{isActive, deliveryFee, communeId}]
+    // --> check if communeId exists in the database or throw an error
+    const newPoints = isRelay
+      ? createRelayPoints(relayPoints, newDeliveryService.id)
+      : createZones(zones, newDeliveryService.id);
+
+    //add new Points to the delivery service
+    if (newPoints.length > 0) {
+      await prisma.deliveryService.update({
+        where: { id: newDeliveryService.id },
+        data: {
+          //if isRelay is true, add relay points to the delivery service
+          ...(isRelay && {
+            relayPoints: {
+              connect: newPoints.map((point) => ({ id: point.id })),
+            },
+          }),
+          //if isRelay is false, add zones to the delivery service
+          ...(isRelay || {
+            homeDeliveryZones: {
+              connect: newPoints.map((point) => ({ id: point.id })),
+            },
+          }),
+        },
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      data: newDeliveryService,
-      message: "Delivery method created successfully",
+      data: {
+        relayPoints: isRelay ? newPoints : [],
+        zones: isRelay ? [] : newPoints,
+        carrier,
+        service: newDeliveryService,
+      },
+      message: "Delivery service updated successfully",
     });
   } catch (error) {
     console.log(error);
@@ -51,11 +104,26 @@ export const createDeliveryService = async (req, res, next) => {
 
 export const getAllDeliveryServices = async (req, res, next) => {
   try {
-    const deliveryServices = await prisma.deliveryService.findMany();
+    //get all delivery services with all their relay points and zones and carrier and communes
+    const deliveryServices = await prisma.deliveryService.findMany({
+      include: {
+        relayPoints: {
+          include: {
+            commune: true,
+          },
+        },
+        homeDeliveryZones: {
+          include: {
+            commune: true,
+          },
+        },
+        carrier: true,
+      },
+    });
     return res.status(200).json({
       success: true,
       data: deliveryServices,
-      message: "Delivery Services retrieved successfully",
+      message: `${deliveryServices.length} Delivery service(s) retrieved successfully`,
     });
   } catch (error) {
     next(error);
@@ -64,90 +132,99 @@ export const getAllDeliveryServices = async (req, res, next) => {
 
 export const updateDeliveryService = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { tmCode, tmName, tmDescription, isActive, carrierName } = req.body;
+    const { id } = req.params; // Get the ID from the request
+    const {
+      name,
+      code,
+      description,
+      carrierName,
+      zones,
+      relayPoints,
+      isActive,
+    } = req.body;
 
-    const deliveryServiceId = parseInt(id, 10);
-
-    // Check if the delivery service exists
-    const existingDeliveryService = await prisma.deliveryService.findFirst({
-      where: { id: deliveryServiceId },
+    // Find the existing delivery service
+    const existingService = await prisma.deliveryService.findUnique({
+      where: { id: parseInt(id), carrier: { name: carrierName } },
+      include: { carrier: true },
     });
 
-    if (!existingDeliveryService) {
-      throw new BaseError(
-        "Validation Error",
-        404,
-        true,
-        `Delivery service does not exist!`
-      );
+    if (!existingService) {
+      throw new BaseError("Not Found", 404, true, "Delivery service not found");
     }
 
-    if (tmCode || carrierName) {
-      // Check if another delivery service exists with the same tmCode and carrierName
-      const conflictingDeliveryService = await prisma.deliveryService.findFirst(
-        {
-          where: {
-            tmCode:
-              tmCode.toUpperCase() ??
-              existingDeliveryService.tmCode.toUpperCase(),
-            carrierName:
-              carrierName.toLowerCase() ??
-              existingDeliveryService.carrierName.toLowerCase(),
-            NOT: { id: deliveryServiceId },
-          },
-        }
-      );
-
-      if (conflictingDeliveryService) {
-        throw new BaseError(
-          "Validation Error",
-          409,
-          true,
-          `Delivery service already exists for carrier '${conflictingDeliveryService.carrierName}' and tmCode '${conflictingDeliveryService.tmCode}'`
-        );
-      }
-    }
-
-    // Prepare the data for updating
-    const dataToUpdate = {
-      ...(tmCode && { tmCode: tmCode.toUpperCase() }),
-      ...(tmName && { tmName: tmName.toLowerCase() }),
-      ...(tmDescription && { tmDescription }),
-      ...(isActive !== undefined && { isActive }),
-      ...(carrierName && { carrierName }),
-    };
+    // Ensure the carrier exists
+    const carrier = await createCarrier(carrierName);
 
     // Update the delivery service
-    const updatedDeliveryService = await prisma.deliveryService.update({
-      where: { id: deliveryServiceId },
-      data: dataToUpdate,
-      include: {
-        deliveryAreas: true,
+    const updatedService = await prisma.deliveryService.update({
+      where: { id: parseInt(id) },
+      data: {
+        name: name || undefined,
+        code: code || undefined,
+        description: description || undefined,
+        carrierId: carrier.id,
+        isActive: isActive || undefined,
       },
     });
 
+    let newPoints = [];
+    if (isRelay) {
+      newPoints = await createRelayPoints(relayPoints, updatedService.id);
+    } else {
+      newPoints = await createZones(zones, updatedService.id);
+    }
+
+    // Connect new relay points or zones
+    if (newPoints.length > 0) {
+      await prisma.deliveryService.update({
+        where: { id: updatedService.id },
+        data: {
+          ...(isRelay && {
+            relayPoints: {
+              connect: newPoints.map((point) => ({ id: point.id })),
+            },
+          }),
+          ...(!isRelay && {
+            homeDeliveryZones: {
+              connect: newPoints.map((zone) => ({ id: zone.id })),
+            },
+          }),
+        },
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      data: updatedDeliveryService,
-      message: "Delivery service updated successfully",
+      data: {
+        relayPoints: isRelay ? newPoints : [],
+        zones: !isRelay ? newPoints : [],
+        carrier,
+        service: updatedService,
+      },
+      message: `Delivery service ${
+        updatedService.name
+      } updated successfully with ${
+        newPoints.length + isRelay ? "relay points" : "zones"
+      }`,
     });
   } catch (error) {
-    next(error); // Forward the error to the error handler middleware
+    console.error(error);
+    next(error);
   }
 };
 
 export const deleteDeliveryService = async (req, res, next) => {
   try {
-    const idArray = req.body.ids; // body is an array of delivery services ids
+    const { ids } = req.body;
 
     // Parse the IDs as integers
-    const ids = idArray.map((id) => parseInt(id));
+    const deliveryServiceIds = ids.map((id) => parseInt(id));
 
     // Find all the delivery services that match the provided IDs
     const deliveryServices = await prisma.deliveryService.findMany({
       where: {
-        id: { in: ids },
+        id: { in: deliveryServiceIds },
       },
     });
 
@@ -164,13 +241,13 @@ export const deleteDeliveryService = async (req, res, next) => {
     // Delete the delivery services
     await prisma.deliveryService.deleteMany({
       where: {
-        id: { in: ids },
+        id: { in: deliveryServiceIds },
       },
     });
 
     return res.status(200).json({
       success: true,
-      data: ids,
+      data: deliveryServiceIds,
       message: `${deliveryServices.length} delivery service(s) deleted successfully.`,
     });
   } catch (error) {

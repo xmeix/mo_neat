@@ -6,8 +6,10 @@ import authRoutes from "./src/apis/auth/auth.route.js";
 import orderRoutes from "./src/apis/order/order.route.js";
 import productRoutes from "./src/apis/product/product.route.js";
 import couponRoutes from "./src/apis/coupon/coupon.route.js";
-import batchRoutes from "./src/apis/batch/batch.route.js";
-import shippingZoneRoutes from "./src/apis/shippingZone/shippingZone.route.js";
+import geoRoutes from "./src/apis/geo/geo.route.js";
+import zoneRoutes from "./src/apis/zone/zone.route.js";
+// import batchRoutes from "./src/apis/batch/batch.route.js";
+// import shippingZoneRoutes from "./src/apis/shippingZone/shippingZone.route.js";
 import deliveryServiceRoutes from "./src/apis/deliveryService/deliveryService.route.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 
@@ -33,8 +35,10 @@ export const setupRoutes = (app) => {
   app.use("/api/orders", orderRoutes);
   app.use("/api/coupons", couponRoutes);
   app.use("/api/products", productRoutes);
-  app.use("/api/batch", batchRoutes);
-  app.use("/api/shippingZone", shippingZoneRoutes);
+  // app.use("/api/batch", batchRoutes);
+  // app.use("/api/shippingZone", shippingZoneRoutes);
+  app.use("/api/zone", zoneRoutes);
   app.use("/api/deliveryService", deliveryServiceRoutes);
+  app.use("/api/geo", geoRoutes);
   app.use(errorHandler);
 };

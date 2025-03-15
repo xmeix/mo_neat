@@ -132,6 +132,127 @@ export const ensureRegionsExist = async (regions, wilayaMap) => {
   };
 };
 
+export const createCarrier = async (carrierName) => {
+  const carrier = await prisma.carrier.findFirst({
+    where: { name: carrierName },
+  });
+  const newCarrier = carrier;
+  if (!carrier) {
+    // create a new carrier
+    newCarrier = await prisma.carrier.create({
+      data: {
+        name: carrierName,
+      },
+    });
+  }
+
+  return newCarrier;
+};
+
+export const createRelayPoints = async (relayPoints, serviceId) => {
+  const newRelayPoints = [];
+  if (relayPoints.length > 0) {
+    // get relay points that exist in the database
+    // how to: when theres a relay point that has the same name and communeId
+    // in the database, it means it already exists
+    const existingRelayPoints = await prisma.relayPoints.findMany({
+      where: {
+        AND: [
+          { communeId: { in: relayPoints.map((point) => point.communeId) } },
+          { name: { in: relayPoints.map((point) => point.name) } },
+        ],
+      },
+    });
+
+    //fetch from the relaypoints array the ones that don't exist in the database
+    const notExistingRelayPoints = relayPoints.filter(
+      (point) =>
+        !existingRelayPoints.find(
+          (existingPoint) =>
+            existingPoint.communeId === point.communeId &&
+            existingPoint.name === point.name
+        )
+    );
+
+    // get relay points where communeId exist in db
+    const notExistingRelayPointsWExistingCommune = findItemsWexistingCommunes(
+      notExistingRelayPoints
+    );
+
+    // create NonExitingRelayPointsWExistingCommune
+    newRelayPoints = await prisma.relayPoints.createMany({
+      data: notExistingRelayPointsWExistingCommune.map((point) => {
+        return {
+          name: point.name,
+          address: point.address,
+          deliveryFee: point.deliveryFee,
+          communeId: point.communeId,
+          serviceId,
+        };
+      }),
+    });
+  }
+  return newRelayPoints;
+};
+
+export const findItemsWexistingCommunes = async (items) => {
+  // check if the communeId exists in the database
+  const existingCommunes = await prisma.commune.findMany({
+    where: {
+      id: { in: items.map((el) => el.communeId) },
+    },
+  });
+
+  // get items where communeId exist in db
+  const itemsWExistingCommune = items.filter((el) =>
+    existingCommunes.find((commune) => {
+      return commune.id === el.communeId;
+    })
+  );
+
+  return itemsWExistingCommune;
+};
+
+export const createZones = async (zones, serviceId) => {
+  const newZones = [];
+  if (zones.length > 0) {
+    const existingZones = await prisma.HomeDeliveryZone.findMany({
+      where: {
+        AND: [
+          { communeId: { in: zones.map((z) => z.communeId) } },
+          { serviceId: serviceId },
+        ],
+      },
+    });
+
+    //fetch from the zones array the ones that don't exist in the database
+    const notExistingZones = zones.filter(
+      (zone) =>
+        !existingZones.find(
+          (existingZone) =>
+            existingZone.communeId === zone.communeId &&
+            existingZone.serviceId === serviceId
+        )
+    );
+    // check if the communeId exists in the database
+    const notExistingZonesWExistingCommune =
+      findItemsWexistingCommunes(notExistingZones);
+
+    // create NonExitingZonesWExistingCommune
+    newZones = await prisma.zone.createMany({
+      data: notExistingZonesWExistingCommune.map((z) => {
+        return {
+          isActive: z.isActive || true,
+          deliveryFee: z.deliveryFee,
+          communeId: z.communeId,
+          deliveryServiceId: serviceId,
+        };
+      }),
+    });
+  }
+  return newZones;
+};
+
 /*
 export const checkSimilarRegions = async (regions, existingServiceId) => {
   //here we need to check first if one of the regions
